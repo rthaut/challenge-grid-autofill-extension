@@ -32,8 +32,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
-import PageHeader from "./components/PageHeader";
 import GridTable from "./components/GridTable";
+import PageHeader from "./components/PageHeader";
 
 const SPACING = 2;
 
@@ -182,6 +182,7 @@ export default function CreateEditGridApp() {
     setGridProp("matrix", matrix);
   };
 
+  // #region CSV File Import
   const processGridFile = (file) =>
     new Promise((resolve, reject) => {
       if (file.type !== "text/csv") {
@@ -241,6 +242,7 @@ export default function CreateEditGridApp() {
       }
     }
   };
+  // #endregion CSV File Import
 
   const handleGridSave = () => {
     // console.table(grid.matrix);
