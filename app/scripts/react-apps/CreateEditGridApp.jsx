@@ -15,6 +15,10 @@ import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
 import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
@@ -22,6 +26,7 @@ import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 
+import CancelIcon from "@mui/icons-material/Cancel";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -72,6 +77,68 @@ export default function CreateEditGridApp() {
     resetSnackbar();
   };
   // #endregion Snackbar
+
+  // #region ConfirmGridDeleteDialog
+  const [confirmGridDeleteDialogOpen, setConfirmGridDeleteDialogOpen] =
+    React.useState(false);
+
+  const closeConfirmDeleteDialog = () => setConfirmGridDeleteDialogOpen(false);
+  const openConfirmDeleteDialog = () => setConfirmGridDeleteDialogOpen(true);
+
+  const ConfirmGridDeleteDialog = () => (
+    <Dialog
+      open={confirmGridDeleteDialogOpen}
+      onClose={closeConfirmDeleteDialog}
+    >
+      <DialogContent>
+        <DialogContentText>
+          {browser.i18n.getMessage(
+            "ManageGrid_Prompt_ConfirmDeleteWithPlaceholder",
+            grid.title
+          )}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={closeConfirmDeleteDialog}
+          variant="outlined"
+          startIcon={<CancelIcon />}
+          autoFocus
+        >
+          {browser.i18n.getMessage("ManageGrid_Prompt_ButtonText_Deny")}
+        </Button>
+        <Button
+          onClick={deleteGrid}
+          color="error"
+          variant="outlined"
+          startIcon={<DeleteIcon />}
+        >
+          {browser.i18n.getMessage("ManageGrid_Prompt_ButtonText_Confirm")}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+  // #endregion ConfirmGridDeleteDialog
+
+  // #region GridDeletedAlert
+  const [alertGridDeletedDialogOpen, setAlertGridDeletedDialogOpen] =
+    React.useState(false);
+
+  const GridDeletedAlertDialog = () => (
+    <Dialog open={alertGridDeletedDialogOpen}>
+      <DialogContent>
+        <DialogContentText>
+          {browser.i18n.getMessage("ManageGrid_Alert_GridDeleted")}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={(evt) => window.close()} variant="contained" autoFocus>
+          {browser.i18n.getMessage("ManageGrid_Alert_ButtonText_Close")}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+  // #endregion GridDeletedAlert
 
   const [pageTitle, setPageTitle] = React.useState(
     id
@@ -203,21 +270,10 @@ export default function CreateEditGridApp() {
     }
   };
 
-  const handleGridDelete = () => {
-    // TODO: replace confirm()
-    const confirmDelete = confirm(
-      browser.i18n.getMessage(
-        "ManageGrid_Prompt_ConfirmDeleteWithPlaceholder",
-        grid.title
-      )
-    );
-
-    if (confirmDelete) {
-      setGrids((grids) => grids.filter((g) => g.id !== grid.id));
-
-      alert(browser.i18n.getMessage("ManageGrid_Alert_GridDeleted")); // TODO: replace alert()
-      window.close();
-    }
+  const deleteGrid = () => {
+    setConfirmGridDeleteDialogOpen(false);
+    setGrids((grids) => grids.filter((g) => g.id !== grid.id));
+    setAlertGridDeletedDialogOpen(true);
   };
 
   return (
@@ -279,7 +335,7 @@ export default function CreateEditGridApp() {
                     color="error"
                     fullWidth
                     startIcon={<DeleteIcon />}
-                    onClick={handleGridDelete}
+                    onClick={openConfirmDeleteDialog}
                   >
                     {browser.i18n.getMessage(
                       "ManageGrid_ButtonText_DeleteGrid"
@@ -328,6 +384,8 @@ export default function CreateEditGridApp() {
           {snackbarMessage}
         </Alert>
       </Snackbar>
+      <ConfirmGridDeleteDialog />
+      <GridDeletedAlertDialog />
     </ThemeProvider>
   );
 }

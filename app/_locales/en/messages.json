@@ -78,8 +78,17 @@
       }
     }
   },
+  "ManageGrid_Prompt_ButtonText_Confirm": {
+    "message": "Yes, delete it"
+  },
+  "ManageGrid_Prompt_ButtonText_Deny": {
+    "message": "No, don't delete it"
+  },
   "ManageGrid_Alert_GridDeleted": {
-    "message": "Grid successfully deleted. This page will now close automatically."
+    "message": "Grid successfully deleted. Click the OK button to close this window automatically."
+  },
+  "ManageGrid_Alert_ButtonText_Close": {
+    "message": "OK"
   },
   "Menu_Title_AutofillGridWithPlaceholder": {
     "message": "Autofill Grid \"$TITLE$\"",
