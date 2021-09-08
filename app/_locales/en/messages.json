@@ -1,0 +1,143 @@
+{
+  "AppName": {
+    "message": "Entrust Grid Autofill",
+    "description": "The name of the application"
+  },
+  "AppShortName": {
+    "message": "entrust fill",
+    "description": "The short_name (maximum of 12 characters recommended) is a short version of the app's name."
+  },
+  "AppDescription": {
+    "message": "Provides a way to quickly autofill (and manage) multiple Entrust authentication grids for sites utilizing Entrust Physical Form Factor Authentication",
+    "description": "The description of the application"
+  },
+  "BrowserActionTitle": {
+    "message": "Entrust Grid Autofill",
+    "description": "The title of the browser action button"
+  },
+  "Popup_CreateGrid_Text": {
+    "message": "Add a New Grid"
+  },
+  "Popup_Options_Text": {
+    "message": "Options"
+  },
+  "ManageGrid_ButtonText_ImportCSV": {
+    "message": "Import from CSV File"
+  },
+  "ManageGrid_ButtonText_CreateGrid": {
+    "message": "Create Grid"
+  },
+  "ManageGrid_ButtonText_DeleteGrid": {
+    "message": "Delete Grid"
+  },
+  "ManageGrid_ButtonText_UpdateGrid": {
+    "message": "Update Grid"
+  },
+  "ManageGrid_LabelText_GridTitle": {
+    "message": "Grid Title"
+  },
+  "ManageGrid_Title_CreateGrid": {
+    "message": "Create a New Grid"
+  },
+  "ManageGrid_Title_EditGridWithPlaceholder": {
+    "message": "Edit Grid \"$ID$\"",
+    "placeholders": {
+      "id": {
+        "content": "$1"
+      }
+    }
+  },
+  "ManageGrid_Error_InvalidFileType": {
+    "message": "File must be CSV"
+  },
+  "ManageGrid_Error_InvalidGridID": {
+    "message": "Failed to load grid from storage"
+  },
+  "ManageGrid_Error_InvalidGridMatrix": {
+    "message": "Grid is not valid"
+  },
+  "ManageGrid_Error_GenericWithPlaceholder": {
+    "message": "An error occurred: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "ManageGrid_Message_GridCreated": {
+    "message": "Grid created successfully. You may now close this window or make additional changes."
+  },
+  "ManageGrid_Message_GridUpdated": {
+    "message": "Grid updated successfully. You may now close this window or make additional changes."
+  },
+  "ManageGrid_Prompt_ConfirmDeleteWithPlaceholder": {
+    "message": "Are you sure you want to delete grid \"$ID$\"?",
+    "placeholders": {
+      "id": {
+        "content": "$1"
+      }
+    }
+  },
+  "ManageGrid_Alert_GridDeleted": {
+    "message": "Grid successfully deleted. This page will now close automatically."
+  },
+  "Menu_Title_AutofillGridWithPlaceholder": {
+    "message": "Autofill Grid \"$TITLE$\"",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "Notifications_Title_NameWithPlaceholder": {
+    "message": "Entrust Grid Autofill - $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "Notifications_Title_InvalidGrid": {
+    "message": "Invalid Grid"
+  },
+  "Notifications_Message_InvalidGrid": {
+    "message": "The grid with ID \"$ID\" could not be found.",
+    "placeholders": {
+      "id": {
+        "content": "$1"
+      }
+    }
+  },
+  "Notifications_Title_MissingChallenge": {
+    "message": "Missing Challenge Prompt"
+  },
+  "Notifications_Message_MissingChallenge": {
+    "message": "There was no challenge prompt found on the page. Please try again."
+  },
+  "Notifications_Title_ResponseError": {
+    "message": "Challenge Response Error"
+  },
+  "Notifications_Message_ResponseError": {
+    "message": "A response could not be generated for the challenge: $CHALLENGE$",
+    "placeholders": {
+      "challenge": {
+        "content": "$1"
+      }
+    }
+  },
+  "Notifications_HelpMessage": {
+    "message": "If this problem persists, please contact the extension author with a URL to reproduce the problem."
+  },
+  "Options_SettingLabel_AutoSubmitForm": {
+    "message": "Automatically Submit Form"
+  },
+  "Options_SettingDescription_AutoSubmitForm": {
+    "message": "Enable to automatically submit the challenge form after entering the response"
+  },
+  "Options_SettingLabel_ForceDarkMode": {
+    "message": "Force Dark Mode"
+  },
+  "Options_SettingDescription_ForceDarkMode": {
+    "message": "Enable to force this extension to use dark mode (regardless of your system preferences)"
+  }
+}

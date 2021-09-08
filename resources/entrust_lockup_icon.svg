@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="34.214401"
+   height="39.507263"
+   viewBox="0 0 34.214401 39.507263"
+   version="1.1"
+   id="svg16"
+   sodipodi:docname="icon_entrust_lockup.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview18"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     showgrid="false"
+     inkscape:zoom="8.6721311"
+     inkscape:cx="18.39225"
+     inkscape:cy="28.539698"
+     inkscape:window-width="3440"
+     inkscape:window-height="1377"
+     inkscape:window-x="1432"
+     inkscape:window-y="217"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg16" />
+  <defs
+     id="defs7">
+    <linearGradient
+       x1="18.384295"
+       y1="5.9138638"
+       x2="18.384295"
+       y2="30.853834"
+       id="linearGradient-1"
+       gradientTransform="scale(0.93063299,1.0745375)"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         stop-color="#C6168D"
+         offset="20%"
+         id="stop2" />
+      <stop
+         stop-color="#762B8A"
+         offset="80%"
+         id="stop4" />
+    </linearGradient>
+  </defs>
+  <g
+     id="Group"
+     transform="translate(-0.001728)"
+     style="fill:none;fill-rule:nonzero;stroke:none;stroke-width:1">
+    <path
+       d="M 17.108928,39.507264 0.001728,29.630016 V 9.877248 L 17.108928,0 34.216128,9.877248 V 29.631744 Z M 31.463424,28.041984 V 11.46528 L 17.1072,3.177792 2.750976,11.46528 V 28.041984 L 17.1072,36.329472 Z"
+       id="Shape"
+       fill="#762b8a" />
+    <polygon
+       id="Path"
+       fill="url(#linearGradient-1)"
+       points="5.50368,26.453952 17.108928,33.153408 28.714176,26.450496 28.714176,23.69952 19.816704,28.881792 19.816704,26.111808 28.703808,20.94336 28.703808,18.192384 19.816704,23.31072 19.816704,20.558016 28.714176,15.443136 28.712448,13.05504 17.108928,6.353856 5.50368,13.05504 "
+       style="fill:url(#linearGradient-1)" />
+  </g>
+</svg>

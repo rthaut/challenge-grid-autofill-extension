@@ -1,0 +1,49 @@
+{
+  "name": "entrust-grid-autofill-extension",
+  "version": "1.0.0",
+  "description": "This browser extension provides a way to quickly autofill (and manage) multiple Entrust authentication grids for sites utilizing Entrust Physical Form Factor Authentication",
+  "author": "Ryan Thaut <rthaut@gmail.com> (https://ryan.thaut.me)",
+  "homepage": "https://rthaut.github.io/entrust-grid-autofill-extension/",
+  "license": "GPL-3.0",
+  "private": true,
+  "scripts": {
+    "lint": "eslint ./app/",
+    "dev": "webextension-toolbox dev",
+    "build": "webextension-toolbox build",
+    "start:chrome": "web-ext run --source-dir=./dist/chrome/ --target chromium",
+    "start:firefox": "web-ext run --source-dir=./dist/firefox/ --target firefox-desktop",
+    "start:firefox:nr": "npm run start:firefox -- --no-reload",
+    "test": "npm run lint && npm run test:firefox",
+    "test:firefox": "npm run build firefox && web-ext lint --source-dir=./dist/firefox/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://https://github.com/rthaut/entrust-grid-autofill-extension.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rthaut/entrust-grid-autofill-extension/issues"
+  },
+  "browserslist": [
+    "chrome >= 51.0",
+    "edge >= 79.0.309",
+    "firefox >= 62.0"
+  ],
+  "dependencies": {
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
+    "@mui/icons-material": "^5.0.0-rc.0",
+    "@mui/material": "^5.0.0-rc.0",
+    "debounce": "^1.2.0",
+    "nanoid": "^3.1.25",
+    "react-router-dom": "^5.2.1",
+    "react-use": "^17.3.1",
+    "use-chrome-storage": "^1.0.4"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-plugin-react": "^7.25.1",
+    "prettier": "^2.3.2",
+    "web-ext": "^6.3.0",
+    "webextension-toolbox": "github:rthaut/webextension-toolbox#browserslist-string-vendor-version"
+  }
+}
