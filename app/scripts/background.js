@@ -4,7 +4,6 @@ import { GRIDS_STORAGE_KEY, GetGrids, FillGridInActiveTab } from "utils/grid";
 
 browser.runtime.onInstalled.addListener((details) => {
   console.log("Installation Details", details);
-  GenerateMenus();
 });
 
 browser.runtime.onMessage.addListener((message, sender) => {
@@ -17,6 +16,7 @@ browser.runtime.onMessage.addListener((message, sender) => {
 
 browser.storage.onChanged.addListener(
   debounce((changes, area) => {
+    // console.log("Storage Changed", changes, area);
     if (area === "sync" && Object.keys(changes).includes(GRIDS_STORAGE_KEY)) {
       GenerateMenus();
     }
@@ -36,7 +36,7 @@ const ShowBasicNotification = ({ title, message }) =>
   });
 
 const GenerateMenus = async () => {
-  await browser.menus.removeAll();
+  await browser.contextMenus.removeAll();
 
   const grids = await GetGrids();
 
@@ -47,11 +47,13 @@ const GenerateMenus = async () => {
         "Menu_Title_AutofillGridWithPlaceholder",
         grid.title
       ),
-      contexts: ["password"],
+      contexts: ["editable"],
       onclick: (evt) => FillGridInActiveTab(grid),
     };
 
     // console.log("Creating Menu", menu);
-    browser.menus.create(menu);
+    browser.contextMenus.create(menu);
   });
 };
+
+GenerateMenus();
