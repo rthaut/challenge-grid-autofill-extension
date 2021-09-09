@@ -224,6 +224,10 @@ export default function CreateEditGridApp() {
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     console.log(file);
+    
+    if ((grid?.title ?? "") === "") {
+      setGridProp("title", file.name.replace(".csv", ""));
+    }
 
     let isValid = false;
     try {
@@ -236,12 +240,6 @@ export default function CreateEditGridApp() {
           error
         )
       );
-    }
-
-    if (isValid) {
-      if ((grid?.title ?? "") === "") {
-        setGridProp("title", file.name.replace(".csv", ""));
-      }
     }
   };
   // #endregion CSV File Import
