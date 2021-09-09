@@ -185,7 +185,7 @@ export default function CreateEditGridApp() {
   // #region CSV File Import
   const processGridFile = (file) =>
     new Promise((resolve, reject) => {
-      if (file.type !== "text/csv") {
+      if (file.type !== "" && file.type !== "text/csv") {
         reject(browser.i18n.getMessage("ManageGrid_Error_InvalidFileType"));
         return;
       }
