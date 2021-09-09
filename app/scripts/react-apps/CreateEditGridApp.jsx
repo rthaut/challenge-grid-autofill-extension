@@ -195,13 +195,15 @@ export default function CreateEditGridApp() {
       reader.onload = (event) => {
         const data = event.target.result.toString();
         const matrix = data
+          .replace(/\r?\n$/, "")
           .split(/\r?\n/)
-          .filter(Boolean)
-          .map((row) =>
-            row
-              .split(",")
-              .map((cell) => cell.trim())
-              .filter(Boolean)
+          .slice(-10) // take last 10 rows (dirty way to skip optional column headers)
+          .map(
+            (row) =>
+              row
+                .split(/,|\t/)
+                .map((cell) => cell.replace(/\"|\'/g, "").trim())
+                .slice(0, 10) // take first 10 columns
           );
 
         // console.table(matrix);
