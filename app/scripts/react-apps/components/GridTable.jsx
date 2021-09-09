@@ -9,7 +9,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
-import { COLS } from "../../utils/grid";
+import { COLS } from "utils/grid";
 
 const StyledOutlinedInput = styled(OutlinedInput)({
   "& fieldset": {

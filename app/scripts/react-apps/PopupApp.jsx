@@ -5,7 +5,7 @@ import { useTitle } from "react-use";
 import useGridStore from "./hooks/useGridStore";
 import useTheme from "./hooks/useTheme";
 
-import { FillGridInActiveTab } from "../utils/grid";
+import { FillGridInActiveTab } from "utils/grid";
 
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";

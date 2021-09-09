@@ -1,5 +1,5 @@
-import { COLS } from "./utils/grid";
-import { GetSetting } from "./utils/settings";
+import { COLS } from "utils/grid";
+import { GetSetting } from "utils/settings";
 
 const REGEX =
   /\[([a-zA-Z]\d{1,2})\].*\[([a-zA-Z]\d{1,2})\].*\[([a-zA-Z]\d{1,2})\]/;

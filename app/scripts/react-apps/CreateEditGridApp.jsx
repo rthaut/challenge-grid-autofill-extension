@@ -7,7 +7,7 @@ import useGridStore from "./hooks/useGridStore";
 import useQueryParam from "./hooks/useQueryParam";
 import useTheme from "./hooks/useTheme";
 
-import { EMPTY_MATRIX, IsGridMatrixValid } from "../utils/grid";
+import { EMPTY_MATRIX, IsGridMatrixValid } from "utils/grid";
 
 import { styled, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";

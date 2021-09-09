@@ -1,6 +1,6 @@
 import { debounce } from "debounce";
 
-import { GRIDS_STORAGE_KEY, GetGrids, FillGridInActiveTab } from "./utils/grid";
+import { GRIDS_STORAGE_KEY, GetGrids, FillGridInActiveTab } from "utils/grid";
 
 browser.runtime.onInstalled.addListener((details) => {
   console.log("Installation Details", details);

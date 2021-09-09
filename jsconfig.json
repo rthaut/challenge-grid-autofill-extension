@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./app",
+    "jsx": "react",
+    "paths": {
+      "utils/*": [
+        "scripts/utils/*"
+      ],
+    }
+  },
+  "include": [
+    "**/*"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules/**/*"
+  ]
+}
