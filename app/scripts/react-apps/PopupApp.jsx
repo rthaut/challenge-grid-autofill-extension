@@ -61,6 +61,7 @@ export default function PopupApp() {
               </ListItemIcon>
               <ListItemText
                 primary={browser.i18n.getMessage("Popup_Options_Text")}
+                sx={{ whiteSpace: "nowrap" }}
               />
             </ListItemButton>
           </ListItem>
@@ -71,6 +72,7 @@ export default function PopupApp() {
               </ListItemIcon>
               <ListItemText
                 primary={browser.i18n.getMessage("Popup_CreateGrid_Text")}
+                sx={{ whiteSpace: "nowrap" }}
               />
             </ListItemButton>
           </ListItem>
@@ -90,7 +92,10 @@ export default function PopupApp() {
                   }
                 >
                   <ListItemButton onClick={fillGridClickHandler(grid)}>
-                    <ListItemText primary={grid.title} />
+                    <ListItemText
+                      primary={grid.title}
+                      sx={{ whiteSpace: "nowrap" }}
+                    />
                   </ListItemButton>
                 </ListItem>
               ))}
