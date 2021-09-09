@@ -121,7 +121,7 @@
     "message": "Missing Challenge Prompt"
   },
   "Notifications_Message_MissingChallenge": {
-    "message": "There was no challenge prompt found on the page. Please try again."
+    "message": "There was no challenge prompt found on the page."
   },
   "Notifications_Title_ResponseError": {
     "message": "Challenge Response Error"
@@ -135,7 +135,7 @@
     }
   },
   "Notifications_HelpMessage": {
-    "message": "If this problem persists, please contact the extension author with a URL to reproduce the problem."
+    "message": "Please contact the extension author if this problem persists."
   },
   "Options_SettingLabel_AutoSubmitForm": {
     "message": "Automatically Submit Form"
