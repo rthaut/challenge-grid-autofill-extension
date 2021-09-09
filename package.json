@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "This browser extension provides a way to quickly autofill (and manage) multiple Entrust authentication grids for sites utilizing Entrust Physical Form Factor Authentication",
   "author": "Ryan Thaut <rthaut@gmail.com> (https://ryan.thaut.me)",
-  "homepage": "https://rthaut.github.io/entrust-grid-autofill-extension/",
+  "homepage": "https://github.com/rthaut/entrust-grid-autofill-extension/",
   "license": "GPL-3.0",
   "private": true,
   "scripts": {

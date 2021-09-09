@@ -7,14 +7,22 @@ import useTheme from "./hooks/useTheme";
 
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import Link from "@mui/material/Link";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import FormHelperText from "@mui/material/FormHelperText";
-import Switch from "@mui/material/Switch";
 import Paper from "@mui/material/Paper";
+import Switch from "@mui/material/Switch";
+import Typography from "@mui/material/Typography";
+
+import HelpIcon from "@mui/icons-material/HelpCenter";
+
+const manifest = browser.runtime.getManifest();
 
 export default function PopupApp() {
   useTitle(browser.i18n.getMessage("AppName"));
@@ -59,6 +67,19 @@ export default function PopupApp() {
               </FormControl>
             </ListItem>
           ))}
+          <ListItem>
+            <ListItemIcon>
+              <HelpIcon sx={{ color: "primary.main", fontSize: 48 }} />
+            </ListItemIcon>
+            <ListItemText disableTypography>
+              <Typography>
+                {browser.i18n.getMessage("Options_BugEnhancement_QuestionText")}
+              </Typography>
+              <Link href={manifest.homepage_url.replace(/\/$/, "") + "/issues"}>
+                {browser.i18n.getMessage("Options_BugEnhancement_LinkText")}
+              </Link>
+            </ListItemText>
+          </ListItem>
         </List>
       </Paper>
     </ThemeProvider>

@@ -148,5 +148,11 @@
   },
   "Options_SettingDescription_ForceDarkMode": {
     "message": "Enable to force this extension to use dark mode (regardless of your system preferences)"
+  },
+  "Options_BugEnhancement_QuestionText": {
+    "message": "Found a bug? Have an idea for an enhancement?"
+  },
+  "Options_BugEnhancement_LinkText": {
+    "message": "Please submit an issue on the GitHub repository"
   }
 }
