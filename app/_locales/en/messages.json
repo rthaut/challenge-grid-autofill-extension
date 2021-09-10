@@ -79,10 +79,10 @@
     }
   },
   "ManageGrid_Prompt_ButtonText_Confirm": {
-    "message": "Yes, delete it"
+    "message": "Yes"
   },
   "ManageGrid_Prompt_ButtonText_Deny": {
-    "message": "No, don't delete it"
+    "message": "No"
   },
   "ManageGrid_Alert_GridDeleted": {
     "message": "Grid successfully deleted. Click the OK button to close this window automatically."

@@ -26,7 +26,6 @@ import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 
-import CancelIcon from "@mui/icons-material/Cancel";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -100,20 +99,19 @@ export default function CreateEditGridApp() {
       </DialogContent>
       <DialogActions>
         <Button
+          onClick={deleteGrid}
+          color="error"
+          variant="contained"
+        >
+          {browser.i18n.getMessage("ManageGrid_Prompt_ButtonText_Confirm")}
+        </Button>
+        <Button
           onClick={closeConfirmDeleteDialog}
+          color="inherit"
           variant="outlined"
-          startIcon={<CancelIcon />}
           autoFocus
         >
           {browser.i18n.getMessage("ManageGrid_Prompt_ButtonText_Deny")}
-        </Button>
-        <Button
-          onClick={deleteGrid}
-          color="error"
-          variant="outlined"
-          startIcon={<DeleteIcon />}
-        >
-          {browser.i18n.getMessage("ManageGrid_Prompt_ButtonText_Confirm")}
         </Button>
       </DialogActions>
     </Dialog>
@@ -333,7 +331,7 @@ export default function CreateEditGridApp() {
               >
                 {!isNewGrid && (
                   <Button
-                    variant="contained"
+                    variant="outlined"
                     color="error"
                     fullWidth
                     startIcon={<DeleteIcon />}
