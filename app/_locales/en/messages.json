@@ -1,19 +1,22 @@
 {
   "AppName": {
-    "message": "Entrust Grid Autofill",
+    "message": "Challenge Grid Autofill",
     "description": "The name of the application"
   },
   "AppShortName": {
-    "message": "entrust fill",
+    "message": "gridautofill",
     "description": "The short_name (maximum of 12 characters recommended) is a short version of the app's name."
   },
   "AppDescription": {
-    "message": "Provides a way to quickly autofill (and manage) multiple Entrust authentication grids for sites utilizing Entrust Physical Form Factor Authentication",
+    "message": "Provides a way to programmatically parse prompts and automatically fill in the corresponding response for websites using security/challenge grids as an additional authentication mechanism.",
     "description": "The description of the application"
   },
   "BrowserActionTitle": {
-    "message": "Entrust Grid Autofill",
+    "message": "Challenge Grid Autofill",
     "description": "The title of the browser action button"
+  },
+  "GridType_TItle_Entrust": {
+    "message": "Entrust"
   },
   "Popup_CreateGrid_Text": {
     "message": "Add a New Grid"
@@ -33,17 +36,26 @@
   "ManageGrid_ButtonText_UpdateGrid": {
     "message": "Update Grid"
   },
+  "ManageGrid_LabelText_GridType": {
+    "message": "Grid Type"
+  },
   "ManageGrid_LabelText_GridTitle": {
     "message": "Grid Title"
   },
   "ManageGrid_Title_CreateGrid": {
     "message": "Create a New Grid"
   },
-  "ManageGrid_Title_EditGridWithPlaceholder": {
-    "message": "Edit Grid \"$ID$\"",
+  "ManageGrid_Title_EditGrid": {
+    "message": "Edit Grid"
+  },
+  "ManageGrid_Title_EditGridWithPlaceholders": {
+    "message": "Edit $TYPE$ Grid \"$ID$\"",
     "placeholders": {
       "id": {
         "content": "$1"
+      },
+      "type": {
+        "content": "$2"
       }
     }
   },
@@ -99,7 +111,7 @@
     }
   },
   "Notifications_Title_NameWithPlaceholder": {
-    "message": "Entrust Grid Autofill - $TITLE$",
+    "message": "Challenge Grid Autofill - $TITLE$",
     "placeholders": {
       "title": {
         "content": "$1"

@@ -7,7 +7,12 @@ import useGridStore from "./hooks/useGridStore";
 import useQueryParam from "./hooks/useQueryParam";
 import useTheme from "./hooks/useTheme";
 
-import { EMPTY_MATRIX, IsGridMatrixValid } from "utils/grid";
+import {
+  GRID_CONFIGS,
+  GetEmptyGridMatrix,
+  IsGridMatrixValid,
+  IsGridTypeValid,
+} from "utils/grids";
 
 import { styled, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -20,8 +25,12 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import IconButton from "@mui/material/IconButton";
+import InputLabel from "@mui/material/InputLabel";
 import Divider from "@mui/material/Divider";
+import FormControl from "@mui/material/FormControl";
+import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
 import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
@@ -31,7 +40,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
-import GridTable from "./components/GridTable";
+import GridMatrixTable from "./components/GridMatrixTable";
 import PageHeader from "./components/PageHeader";
 
 const SPACING = 2;
@@ -58,6 +67,12 @@ export default function CreateEditGridApp() {
 
   const showSnackbarError = (message) => {
     setSnackbarSeverity("error");
+    setSnackbarMessage(message);
+    setSnackbarOpen(true);
+  };
+
+  const showSnackbarWarning = (message) => {
+    setSnackbarSeverity("warning");
     setSnackbarMessage(message);
     setSnackbarOpen(true);
   };
@@ -98,11 +113,7 @@ export default function CreateEditGridApp() {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button
-          onClick={deleteGrid}
-          color="error"
-          variant="contained"
-        >
+        <Button onClick={deleteGrid} color="error" variant="contained">
           {browser.i18n.getMessage("ManageGrid_Prompt_ButtonText_Confirm")}
         </Button>
         <Button
@@ -140,7 +151,7 @@ export default function CreateEditGridApp() {
 
   const [pageTitle, setPageTitle] = React.useState(
     id
-      ? browser.i18n.getMessage("ManageGrid_Title_EditGridWithPlaceholder", id)
+      ? browser.i18n.getMessage("ManageGrid_Title_EditGrid")
       : browser.i18n.getMessage("ManageGrid_Title_CreateGrid")
   );
   useTitle(pageTitle);
@@ -151,8 +162,12 @@ export default function CreateEditGridApp() {
 
   const [grid, { set: setGridProp, setAll: setAllGridProps }] = useMap({
     id: "",
+    type:
+      Object.keys(GRID_CONFIGS).length === 1
+        ? Object.keys(GRID_CONFIGS)[0]
+        : "",
     title: "",
-    matrix: EMPTY_MATRIX,
+    matrix: [[]],
   });
 
   React.useEffect(() => {
@@ -160,7 +175,12 @@ export default function CreateEditGridApp() {
       const gridFromStorage = grids.find((g) => g.id === id);
       if (gridFromStorage !== undefined) {
         setIsNewGrid(false);
-        setPageTitle(`Edit Grid "${gridFromStorage.title}"`);
+        setPageTitle(
+          browser.i18n.getMessage("ManageGrid_Title_EditGridWithPlaceholders", [
+            gridFromStorage.title,
+            browser.i18n.getMessage(`GridType_Title_${gridFromStorage.type}`),
+          ])
+        );
         setAllGridProps(gridFromStorage);
       } else {
         // setPageTitle(browser.i18n.getMessage("ManageGrid_Title_CreateGrid"));
@@ -172,7 +192,9 @@ export default function CreateEditGridApp() {
   }, [id, grids]);
 
   const isGridValid = () =>
-    IsGridMatrixValid(grid.matrix) && grid.title.length > 0;
+    IsGridTypeValid(grid.type) &&
+    IsGridMatrixValid(grid.type, grid.matrix) &&
+    grid.title.length > 0;
 
   const setMatrixCell = (col, row, value) => {
     const { matrix } = grid;
@@ -181,7 +203,7 @@ export default function CreateEditGridApp() {
   };
 
   // #region CSV File Import
-  const processGridFile = (file) =>
+  const processGridCSVFile = (file) =>
     new Promise((resolve, reject) => {
       if (file.type !== "" && file.type !== "text/csv") {
         reject(browser.i18n.getMessage("ManageGrid_Error_InvalidFileType"));
@@ -192,26 +214,25 @@ export default function CreateEditGridApp() {
 
       reader.onload = (event) => {
         const data = event.target.result.toString();
-        const matrix = data
+        const csvMatrix = data
           .replace(/\r?\n$/, "")
           .split(/\r?\n/)
-          .slice(-10) // take last 10 rows (dirty way to skip optional column headers)
+          .slice(GRID_CONFIGS[grid.type]?.MATRIX_ROWS.length * -1) // take last # rows (dirty way to skip optional column headers)
           .map(
             (row) =>
               row
                 .split(/,|\t/)
                 .map((cell) => cell.replace(/\"|\'/g, "").trim())
-                .slice(0, 10) // take first 10 columns
+                .slice(0, GRID_CONFIGS[grid.type]?.MATRIX_COLS.length) // take first # columns
           );
+
+        const matrix = GetEmptyGridMatrix(grid.type).map((row, rowIndex) =>
+          row.map((col, colIndex) => csvMatrix?.[rowIndex]?.[colIndex] ?? "")
+        );
 
         // console.table(matrix);
         setGridProp("matrix", matrix);
-
-        if (!IsGridMatrixValid(matrix)) {
-          reject(browser.i18n.getMessage("ManageGrid_Error_InvalidGridMatrix"));
-        }
-
-        resolve(true);
+        resolve(IsGridMatrixValid(grid.type, matrix));
       };
 
       reader.onerror = reject;
@@ -221,17 +242,21 @@ export default function CreateEditGridApp() {
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
-    console.log(file);
-    
-    if ((grid?.title ?? "") === "") {
+    // console.log(file);
+
+    if ((grid.title ?? "") === "") {
       setGridProp("title", file.name.replace(".csv", ""));
     }
 
-    let isValid = false;
     try {
-      isValid = await processGridFile(file);
+      resetSnackbar();
+      const isValid = await processGridCSVFile(file);
+      if (!isValid) {
+        showSnackbarWarning(
+          browser.i18n.getMessage("ManageGrid_Error_InvalidGridMatrix")
+        );
+      }
     } catch (error) {
-      isValid = false;
       showSnackbarError(
         browser.i18n.getMessage(
           "ManageGrid_Error_GenericWithPlaceholder",
@@ -295,34 +320,69 @@ export default function CreateEditGridApp() {
               spacing={SPACING}
               sx={{ pb: SPACING }}
             >
-              <label htmlFor="csv-file-input">
-                <HiddenFileInput
-                  accept=".csv"
-                  id="csv-file-input"
-                  type="file"
-                  onChange={handleFileChange}
-                />
-                <Button
-                  variant="outlined"
-                  component="span"
-                  fullWidth
-                  startIcon={<UploadFileIcon />}
-                >
-                  {browser.i18n.getMessage("ManageGrid_ButtonText_ImportCSV")}
-                </Button>
-              </label>
-              <TextField
-                label={browser.i18n.getMessage(
-                  "ManageGrid_LabelText_GridTitle"
-                )}
-                size="small"
-                required
-                value={grid?.title ?? ""}
-                onChange={(event) => setGridProp("title", event.target.value)}
-              />
-              <Divider />
-              <GridTable grid={grid?.matrix} setMatrixCell={setMatrixCell} />
-              <Divider />
+              {isNewGrid && (
+                <FormControl fullWidth size="small">
+                  <InputLabel>
+                    {browser.i18n.getMessage("ManageGrid_LabelText_GridType")}
+                  </InputLabel>
+                  <Select
+                    label={browser.i18n.getMessage(
+                      "ManageGrid_LabelText_GridType"
+                    )}
+                    required
+                    value={grid.type ?? ""}
+                    onChange={(event) =>
+                      setGridProp("type", event.target.value)
+                    }
+                  >
+                    {Object.keys(GRID_CONFIGS).map((type) => (
+                      <MenuItem key={type} value={type}>
+                        {browser.i18n.getMessage(`GridType_Title_${type}`)}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+              {IsGridTypeValid(grid.type) && (
+                <>
+                  <label htmlFor="csv-file-input">
+                    <HiddenFileInput
+                      accept=".csv"
+                      id="csv-file-input"
+                      type="file"
+                      onChange={handleFileChange}
+                    />
+                    <Button
+                      variant="outlined"
+                      component="span"
+                      fullWidth
+                      startIcon={<UploadFileIcon />}
+                    >
+                      {browser.i18n.getMessage(
+                        "ManageGrid_ButtonText_ImportCSV"
+                      )}
+                    </Button>
+                  </label>
+                  <TextField
+                    label={browser.i18n.getMessage(
+                      "ManageGrid_LabelText_GridTitle"
+                    )}
+                    size="small"
+                    required
+                    value={grid.title ?? ""}
+                    onChange={(event) =>
+                      setGridProp("title", event.target.value)
+                    }
+                  />
+                  <Divider />
+                  <GridMatrixTable
+                    type={grid.type}
+                    matrix={grid.matrix}
+                    setMatrixCell={setMatrixCell}
+                  />
+                  <Divider />
+                </>
+              )}
               <Stack
                 direction="row"
                 justifyContent="center"

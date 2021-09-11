@@ -1,8 +1,8 @@
-import { COLS } from "utils/grid";
+import {
+  GRID_CONFIGS,
+  GetResponseForChallengeFromGridMatrix,
+} from "utils/grids";
 import { GetSetting } from "utils/settings";
-
-const REGEX =
-  /\[([a-zA-Z]\d{1,2})\].*\[([a-zA-Z]\d{1,2})\].*\[([a-zA-Z]\d{1,2})\]/;
 
 browser.runtime.onMessage.addListener((message, sender) => {
   // console.log("Content Script Runtime Message", sender, message);
@@ -21,15 +21,21 @@ const ShowBasicNotification = (title, message) =>
     },
   });
 
-const GetChallengeFromPage = () => {
+const GetChallengeFromPage = (patterns) => {
   let challenges = [];
 
   const text = document.documentElement.innerText;
 
-  const matches = REGEX.exec(text);
-  if (matches !== null) {
-    challenges = matches.slice(1);
-  } else {
+  let matches = null;
+  for (const pattern of patterns) {
+    matches = pattern.exec(text);
+    if (matches !== null) {
+      challenges = matches.slice(1);
+      break;
+    }
+  }
+
+  if (matches === null || !challenges.length) {
     console.warn("Failed to find challenge(s) in document text", text);
   }
 
@@ -37,29 +43,15 @@ const GetChallengeFromPage = () => {
   return challenges;
 };
 
-/**
- * Returns the response to a challenge using the supplied grid matrix
- * @param {string[]} challenge the array of challenge grid cells (in A# format)
- * @param {string[][]} matrix the grid matrix
- * @returns {string} the response for the challenge
- */
-const GetResponseForChallengeFromGridMatrix = (challenge, matrix) => {
-  let response = "";
-
-  challenge.forEach((c) => {
-    const col = c[0];
-    const row = c.split("").slice(1).join("");
-    response += matrix[parseInt(row, 10) - 1][COLS.indexOf(col)];
-  });
-
-  // console.log({ response });
-  return response;
-};
-
 const AutoFillGrid = async (grid) => {
-  const { matrix } = grid;
-  // console.table(matrix);
+  const { matrix, type } = grid;
 
+  const {
+    CHALLENGE_PATTERNS: patterns,
+    RESPONSE_INPUT_FIELD_QUERY_SELECTOR: querySelector,
+  } = GRID_CONFIGS[type];
+
+  // console.table(matrix);
   if (!matrix) {
     ShowBasicNotification(
       browser.i18n.getMessage("Notifications_Title_InvalidGrid"),
@@ -68,7 +60,7 @@ const AutoFillGrid = async (grid) => {
     return;
   }
 
-  const challenge = GetChallengeFromPage();
+  const challenge = GetChallengeFromPage(patterns);
   if (!Array.isArray(challenge) || challenge.length < 1) {
     // TODO: come up with a way for the user to manually enter the challenge
     ShowBasicNotification(
@@ -78,7 +70,11 @@ const AutoFillGrid = async (grid) => {
     return;
   }
 
-  const response = GetResponseForChallengeFromGridMatrix(challenge, matrix);
+  const response = GetResponseForChallengeFromGridMatrix(
+    type,
+    challenge,
+    matrix
+  );
   if (response.length !== challenge.length) {
     ShowBasicNotification(
       browser.i18n.getMessage("Notifications_Title_ResponseError"),
@@ -90,7 +86,7 @@ const AutoFillGrid = async (grid) => {
     return;
   }
 
-  const input = document.querySelector(`input[type="password"]`);
+  const input = document.querySelector(querySelector);
   input.setAttribute("value", response);
   input.value = response;
 

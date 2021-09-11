@@ -1,9 +1,9 @@
 {
-  "name": "entrust-grid-autofill-extension",
+  "name": "challenge-grid-autofill-extension",
   "version": "1.0.0",
-  "description": "This browser extension provides a way to quickly autofill (and manage) multiple Entrust authentication grids for sites utilizing Entrust Physical Form Factor Authentication",
+  "description": "This browser extension provides a way to programmatically parse prompts and automatically fill in the corresponding response for websites using security/challenge grids as an additional authentication mechanism, such as Entrust Physical Form Factor Authentication",
   "author": "Ryan Thaut <rthaut@gmail.com> (https://ryan.thaut.me)",
-  "homepage": "https://github.com/rthaut/entrust-grid-autofill-extension/",
+  "homepage": "https://github.com/rthaut/challenge-grid-autofill-extension/",
   "license": "GPL-3.0",
   "private": true,
   "scripts": {
@@ -19,10 +19,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://https://github.com/rthaut/entrust-grid-autofill-extension.git"
+    "url": "git://https://github.com/rthaut/challenge-grid-autofill-extension.git"
   },
   "bugs": {
-    "url": "https://github.com/rthaut/entrust-grid-autofill-extension/issues"
+    "url": "https://github.com/rthaut/challenge-grid-autofill-extension/issues"
   },
   "browserslist": [
     "chrome >= 51.0",

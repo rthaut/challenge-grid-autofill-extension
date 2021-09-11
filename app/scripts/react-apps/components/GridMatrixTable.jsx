@@ -1,5 +1,7 @@
 import React from "react";
 
+import { GRID_CONFIGS, IsGridTypeValid } from "utils/grids";
+
 import styled from "@mui/system/styled";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Table from "@mui/material/Table";
@@ -8,8 +10,6 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-
-import { COLS } from "utils/grid";
 
 const StyledOutlinedInput = styled(OutlinedInput)({
   "& fieldset": {
@@ -20,7 +20,13 @@ const StyledOutlinedInput = styled(OutlinedInput)({
   },
 });
 
-export default function GridTable({ grid, setMatrixCell }) {
+export default function GridMatrixTable({ type, matrix, setMatrixCell }) {
+  if (!IsGridTypeValid(type)) {
+    return null;
+  }
+
+  const { MATRIX_COLS, MATRIX_ROWS } = GRID_CONFIGS[type];
+
   const handleChange = (row, col) => (event) =>
     setMatrixCell(row, col, event.target.value);
 
@@ -30,15 +36,15 @@ export default function GridTable({ grid, setMatrixCell }) {
         <TableHead>
           <TableRow sx={{ th: { border: 0 } }}>
             <TableCell align="center" padding="none" />
-            {COLS.map((letter) => (
-              <TableCell key={letter} align="center" padding="none">
-                {letter}
+            {MATRIX_COLS.map((col) => (
+              <TableCell key={col} align="center" padding="none">
+                {col}
               </TableCell>
             ))}
           </TableRow>
         </TableHead>
         <TableBody>
-          {grid.map((row, rowIndex) => (
+          {MATRIX_ROWS.map((row, rowIndex) => (
             <TableRow key={rowIndex} sx={{ "td, th": { border: 0 } }}>
               <TableCell
                 component="th"
@@ -46,19 +52,19 @@ export default function GridTable({ grid, setMatrixCell }) {
                 scope="row"
                 variant="head"
               >
-                {rowIndex + 1}
+                {row}
               </TableCell>
-              {row.map((cell, cellIndex) => (
-                <TableCell key={cellIndex} align="center" padding="none">
+              {MATRIX_COLS.map((col, colIndex) => (
+                <TableCell key={colIndex} align="center" padding="none">
                   <StyledOutlinedInput
                     color="primary"
                     inputProps={{ maxLength: 1 }}
                     margin="none"
-                    onChange={handleChange(rowIndex, cellIndex)}
+                    onChange={handleChange(rowIndex, colIndex)}
                     required
                     size="small"
                     sx={{ input: { textAlign: "center" } }}
-                    value={cell}
+                    value={matrix[rowIndex]?.[colIndex] ?? ""}
                   />
                 </TableCell>
               ))}

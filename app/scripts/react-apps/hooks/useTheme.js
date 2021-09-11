@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import useDarkMode from "./useDarkMode";
 
 import { createTheme } from "@mui/material/styles";
+import { indigo, purple } from "@mui/material/colors";
 
 export const useTheme = () => {
   const darkMode = useDarkMode();
@@ -12,10 +13,10 @@ export const useTheme = () => {
         palette: {
           mode: darkMode ? "dark" : "light",
           primary: {
-            main: darkMode ? "#C6168D" : "#762B8A",
+            main: purple[darkMode ? "A200" : 700],
           },
           secondary: {
-            main: "#2877D2",
+            main: indigo[darkMode ? "A200" : 700],
           },
         },
       }),

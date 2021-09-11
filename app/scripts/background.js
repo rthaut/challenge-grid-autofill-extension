@@ -1,6 +1,10 @@
 import { debounce } from "debounce";
 
-import { GRIDS_STORAGE_KEY, GetGrids, FillGridInActiveTab } from "utils/grid";
+import {
+  GRIDS_STORAGE_KEY,
+  GetGridsFromStorage,
+  FillGridInActiveTab,
+} from "utils/grids";
 
 browser.runtime.onInstalled.addListener((details) => {
   console.log("Installation Details", details);
@@ -38,7 +42,7 @@ const ShowBasicNotification = ({ title, message }) =>
 const GenerateMenus = async () => {
   await browser.contextMenus.removeAll();
 
-  const grids = await GetGrids();
+  const grids = await GetGridsFromStorage();
 
   grids.forEach((grid) => {
     const menu = {

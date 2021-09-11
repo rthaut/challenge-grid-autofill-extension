@@ -6,7 +6,7 @@
   "manifest_version": 2,
   "default_locale": "en",
   "author": "Ryan Thaut",
-  "homepage_url": "https://github.com/rthaut/entrust-grid-autofill-extension/",
+  "homepage_url": "https://github.com/rthaut/challenge-grid-autofill-extension/",
   "icons": {
     "16": "images/icon-16.png",
     "128": "images/icon-128.png"
@@ -50,7 +50,7 @@
   "__chrome__minimum_chrome_version": "51.0",
   "__firefox__applications": {
     "gecko": {
-      "id": "entrust-grid-autofill@ryan.thaut.me",
+      "id": "challenge-grid-autofill@ryan.thaut.me",
       "strict_min_version": "62.0"
     }
   }
