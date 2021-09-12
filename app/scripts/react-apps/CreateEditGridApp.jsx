@@ -203,9 +203,9 @@ export default function CreateEditGridApp() {
     IsGridMatrixValid(grid.type, grid.matrix) &&
     grid.title.length > 0;
 
-  const setMatrixCell = (col, row, value) => {
+  const setMatrixCell = (row, col, value) => {
     const { matrix } = grid;
-    matrix[col][row] = value;
+    matrix[row][col] = value;
     setGridProp("matrix", matrix);
   };
 
