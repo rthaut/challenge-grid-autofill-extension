@@ -27,9 +27,6 @@ export default function GridMatrixTable({ type, matrix, setMatrixCell }) {
 
   const { MATRIX_COLS, MATRIX_ROWS } = GRID_CONFIGS[type];
 
-  const handleChange = (row, col) => (event) =>
-    setMatrixCell(row, col, event.target.value);
-
   return (
     <TableContainer>
       <Table size="small">
@@ -60,11 +57,13 @@ export default function GridMatrixTable({ type, matrix, setMatrixCell }) {
                     color="primary"
                     inputProps={{ maxLength: 1 }}
                     margin="none"
-                    onChange={handleChange(rowIndex, colIndex)}
+                    onChange={(event) =>
+                      setMatrixCell(rowIndex, colIndex, event.target.value)
+                    }
                     required
                     size="small"
                     sx={{ input: { textAlign: "center" } }}
-                    value={matrix[rowIndex]?.[colIndex] ?? ""}
+                    value={matrix?.[rowIndex]?.[colIndex] ?? ""}
                   />
                 </TableCell>
               ))}
