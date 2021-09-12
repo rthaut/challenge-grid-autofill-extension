@@ -1,5 +1,5 @@
 export const CHALLENGE_PATTERNS = [
-  /\[([a-zA-Z]\d{1,2})\].*\[([a-zA-Z]\d{1,2})\].*\[([a-zA-Z]\d{1,2})\]/,
+  /([a-zA-Z]\d{1,2})/g,
 ];
 
 export const MATRIX_COLS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
