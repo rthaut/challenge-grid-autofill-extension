@@ -15,10 +15,10 @@
     "message": "Challenge Grid Autofill",
     "description": "The title of the browser action button"
   },
-  "GridType_TItle_Deepnet": {
+  "GridType_Title_Deepnet": {
     "message": "Deepnet GridID"
   },
-  "GridType_TItle_Entrust": {
+  "GridType_Title_Entrust": {
     "message": "Entrust eGrid"
   },
   "Popup_CreateGrid_Text": {
