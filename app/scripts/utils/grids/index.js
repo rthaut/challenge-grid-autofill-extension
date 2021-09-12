@@ -42,7 +42,9 @@ export const FillGridInActiveTab = (grid) =>
 export const GetEmptyGridMatrix = (type) => {
   const { MATRIX_COLS: cols, MATRIX_ROWS: rows } = GRID_CONFIGS[type];
 
-  return new Array(rows.length).fill(new Array(cols.length).fill(""));
+  return Array(rows.length)
+    .fill()
+    .map(() => Array(cols.length).fill(""));
 };
 
 /**
