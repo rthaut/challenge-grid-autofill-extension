@@ -191,6 +191,13 @@ export default function CreateEditGridApp() {
     }
   }, [id, grids]);
 
+  React.useEffect(() => {
+    setGridProp(
+      "matrix",
+      IsGridTypeValid(grid?.type) ? GetEmptyGridMatrix(grid.type) : [[]]
+    );
+  }, [grid?.type]);
+
   const isGridValid = () =>
     IsGridTypeValid(grid.type) &&
     IsGridMatrixValid(grid.type, grid.matrix) &&
