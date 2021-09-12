@@ -308,12 +308,28 @@ export default function CreateEditGridApp() {
     setAlertGridDeletedDialogOpen(true);
   };
 
+  const getContainerMaxWidth = () => {
+    let maxWidth = "sm";
+    if (IsGridTypeValid(grid.type)) {
+      const cols = GRID_CONFIGS[grid.type]?.MATRIX_COLS.length;
+      if (cols > 30) {
+        maxWidth = "xl";
+      } else if (cols > 20) {
+        maxWidth = "lg";
+      } else if (cols > 15) {
+        maxWidth = "md";
+      }
+    }
+
+    return maxWidth;
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Paper elevation={0}>
         <PageHeader title={pageTitle} />
-        <Container maxWidth="sm">
+        <Container maxWidth={getContainerMaxWidth()}>
           <Box
             component="form"
             noValidate
