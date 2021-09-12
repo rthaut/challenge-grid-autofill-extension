@@ -2,9 +2,9 @@
 
 [![Chrome Web Store][chrome-image-version]][chrome-url] [![Microsoft Edge Add-on][edge-image-version]][edge-url] [![Mozilla Add-on][firefox-image-version]][firefox-url]
 
-> This browser extension provides a way to programmatically parse prompts and automatically fill in the corresponding response for websites using security/challenge grids as an additional authentication mechanism, such as [Entrust Physical Form Factor Authentication](https://www.entrust.com/digital-security/identity-and-access-management/capabilities/authenticators).
+> This browser extension provides a way to programmatically parse prompts and automatically fill in the corresponding response for websites using security/challenge grids as an additional authentication mechanism, such as [Entrust eGrid](https://www.entrust.com/digital-security/identity-and-access-management/capabilities/authenticators) and [Deepnet Security GridID](https://wiki.deepnetsecurity.com/display/DUALSHIELD/GridID).
 
-**NOTICE OF NON-AFFILIATION: Neither this extension nor the extension author are affiliated, associated, authorized, endorsed by, or in any way officially connected with Entrust Corporation or any of its subsidiaries.**
+**NOTICE OF NON-AFFILIATION: Neither this extension nor the extension author are affiliated, associated, authorized, endorsed by, or in any way officially connected with Entrust Corporation, Deepnet Security, or any of their respective subsidiaries or affiliates.**
 
 * * *
 

@@ -1,7 +1,9 @@
 import * as ENTRUST_GRID_CONFIG from "./configs/entrust";
+import * as DEEPNET_GRID_CONFIG from "./configs/deepnet";
 
 export const GRID_CONFIGS = {
   entrust: { ...ENTRUST_GRID_CONFIG },
+  deepnet: { ...DEEPNET_GRID_CONFIG },
 };
 
 export const GRIDS_STORAGE_KEY = "grids";

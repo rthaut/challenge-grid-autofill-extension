@@ -26,16 +26,25 @@ const GetChallengeFromPage = (patterns) => {
 
   const text = document.documentElement.innerText;
 
-  let matches = null;
+  let matches;
   for (const pattern of patterns) {
-    matches = pattern.exec(text);
-    if (matches !== null) {
-      challenges = matches.slice(1);
-      break;
+    matches = null;
+    while ((matches = pattern.exec(text)) !== null) {
+      if (matches.index === pattern.lastIndex) {
+        pattern.lastIndex++;
+      }
+
+      if (matches.length === 1) {
+        // no capture group(s); use full match
+        challenges.push(match);
+      } else if (matches.length > 1) {
+        // one or more capture group(s); use the capture group(s), not the full match
+        challenges = [...challenges, ...matches.slice(1)];
+      }
     }
   }
 
-  if (matches === null || !challenges.length) {
+  if (!challenges.length) {
     console.warn("Failed to find challenge(s) in document text", text);
   }
 

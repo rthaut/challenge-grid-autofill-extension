@@ -15,6 +15,9 @@
     "message": "Challenge Grid Autofill",
     "description": "The title of the browser action button"
   },
+  "GridType_TItle_Deepnet": {
+    "message": "Deepnet GridID"
+  },
   "GridType_TItle_Entrust": {
     "message": "Entrust"
   },
