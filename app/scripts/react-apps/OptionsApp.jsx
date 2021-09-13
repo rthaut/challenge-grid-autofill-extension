@@ -75,7 +75,7 @@ export default function PopupApp() {
               <Typography>
                 {browser.i18n.getMessage("Options_BugEnhancement_QuestionText")}
               </Typography>
-              <Link href={manifest.homepage_url.replace(/\/$/, "") + "/issues"}>
+              <Link href={manifest.homepage_url.replace(/\/$/, "") + "/issues"} target="_blank">
                 {browser.i18n.getMessage("Options_BugEnhancement_LinkText")}
               </Link>
             </ListItemText>
