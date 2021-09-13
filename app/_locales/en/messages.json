@@ -125,7 +125,7 @@
     "message": "Invalid Grid"
   },
   "Notifications_Message_InvalidGrid": {
-    "message": "The grid with ID \"$ID\" could not be found.",
+    "message": "The grid with ID \"$ID$\" could not be found.",
     "placeholders": {
       "id": {
         "content": "$1"
