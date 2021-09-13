@@ -192,11 +192,13 @@ export default function CreateEditGridApp() {
   }, [id, grids]);
 
   React.useEffect(() => {
-    setGridProp(
-      "matrix",
-      IsGridTypeValid(grid?.type) ? GetEmptyGridMatrix(grid.type) : [[]]
-    );
-  }, [grid?.type]);
+    if (isNewGrid) {
+      setGridProp(
+        "matrix",
+        IsGridTypeValid(grid?.type) ? GetEmptyGridMatrix(grid.type) : [[]]
+      );
+    }
+  }, [grid?.type, isNewGrid]);
 
   const isGridValid = () =>
     IsGridTypeValid(grid.type) &&
@@ -280,6 +282,7 @@ export default function CreateEditGridApp() {
       const newId = nanoid();
       grid.id = newId;
       setGrids((grids) => [...grids, grid]);
+      setIsNewGrid(false);
 
       showSnackbarSuccess(
         browser.i18n.getMessage("ManageGrid_Message_GridCreated")
