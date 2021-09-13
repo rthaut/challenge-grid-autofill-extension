@@ -121,6 +121,17 @@
       }
     }
   },
+  "Notifications_Title_AutofillError": {
+    "message": "Failed to Autofill Response"
+  },
+  "Notifications_Message_AutofillError": {
+    "message": "The challenge response (\"$RESPONSE$\") could not be automatically filled into the input field(s).",
+    "placeholders": {
+      "response": {
+        "content": "$1"
+      }
+    }
+  },
   "Notifications_Title_InvalidGrid": {
     "message": "Invalid Grid"
   },

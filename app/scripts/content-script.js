@@ -95,12 +95,28 @@ const AutoFillGrid = async (grid) => {
     return;
   }
 
-  const input = document.querySelector(querySelector);
-  input.setAttribute("value", response);
-  input.value = response;
+  const inputs = document.querySelectorAll(querySelector);
+  if (inputs.length === 1) {
+    // single input field
+    inputs[0].setAttribute("value", response);
+    inputs[0].value = response;
+  } else if (inputs.length === response.length) {
+    // multiple input fields, one for each response character
+    inputs.forEach((input, i) => {
+      input.setAttribute("value", response[i]);
+      input.value = response[i];
+    });
+  } else {
+    // either no input fields, or a mis-matched amount of input fields
+    ShowBasicNotification(
+      browser.i18n.getMessage("Notifications_Title_AutofillError"),
+      browser.i18n.getMessage("Notifications_Message_AutofillError", response)
+    );
+    return;
+  }
 
   if (await GetSetting("autoSubmitForm")) {
-    const form = input.form;
+    const form = inputs[0].form;
     form.submit();
   }
 };
