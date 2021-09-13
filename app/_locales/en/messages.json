@@ -5,11 +5,11 @@
   },
   "AppShortName": {
     "message": "gridautofill",
-    "description": "The short_name (maximum of 12 characters recommended) is a short version of the app's name."
+    "description": "The short_name (maximum of 12 characters) is a short version of the application's name"
   },
   "AppDescription": {
-    "message": "Provides a way to programmatically parse prompts and automatically fill in the corresponding response for websites using security/challenge grids as an additional authentication mechanism.",
-    "description": "The description of the application"
+    "message": "Provides a way to parse challenge prompts and autofill the corresponding response for websites using security/challenge grids.",
+    "description": "The description (maximum of 132 characters) of the application"
   },
   "BrowserActionTitle": {
     "message": "Challenge Grid Autofill",
