@@ -49,6 +49,17 @@ const HiddenFileInput = styled("input")({
   display: "none",
 });
 
+const initialGrid = {
+  id: "",
+  type:
+    Object.keys(GRID_CONFIGS).length === 1 ? Object.keys(GRID_CONFIGS)[0] : "",
+  title: "",
+  matrix:
+    Object.keys(GRID_CONFIGS).length === 1
+      ? GetEmptyGridMatrix(Object.keys(GRID_CONFIGS)[0])
+      : [[]],
+};
+
 export default function CreateEditGridApp() {
   const theme = useTheme();
 
@@ -160,15 +171,8 @@ export default function CreateEditGridApp() {
 
   const [grids, setGrids] = useGridStore();
 
-  const [grid, { set: setGridProp, setAll: setAllGridProps }] = useMap({
-    id: "",
-    type:
-      Object.keys(GRID_CONFIGS).length === 1
-        ? Object.keys(GRID_CONFIGS)[0]
-        : "",
-    title: "",
-    matrix: [[]],
-  });
+  const [grid, { set: setGridProp, setAll: setAllGridProps }] =
+    useMap(initialGrid);
 
   React.useEffect(() => {
     if (id !== undefined && id !== null && id !== "") {
