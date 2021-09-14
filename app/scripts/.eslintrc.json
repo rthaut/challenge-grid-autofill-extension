@@ -1,0 +1,33 @@
+{
+  "env": {
+    "browser": true,
+    "webextensions": true
+  },
+  "globals": {
+    "browser": true,
+    "Promise": true,
+    "require": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2021,
+    "sourceType": "module"
+  },
+  "root": true,
+  "rules": {
+    "no-useless-escape": "off"
+  },
+  "settings": {
+    "import/resolver": {
+      "webpack": {
+        "config": "../webextension-toolbox.config.js"
+      }
+    },
+    "react": {
+      "version": "detect"
+    }
+  }
+}
