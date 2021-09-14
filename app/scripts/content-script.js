@@ -35,10 +35,10 @@ const GetChallengeFromPage = (patterns) => {
       }
 
       if (matches.length === 1) {
-        // no capture group(s); use full match
-        challenges.push(match);
+        // no capture group(s); use just the full match
+        challenges.push(matches[0]);
       } else if (matches.length > 1) {
-        // one or more capture group(s); use the capture group(s), not the full match
+        // one or more capture group(s); use just the capture group(s), not the full match
         challenges = [...challenges, ...matches.slice(1)];
       }
     }
@@ -64,7 +64,7 @@ const AutoFillGrid = async (grid) => {
   if (!matrix) {
     ShowBasicNotification(
       browser.i18n.getMessage("Notifications_Title_InvalidGrid"),
-      browser.i18n.getMessage("Notifications_Message_InvalidGrid", id)
+      browser.i18n.getMessage("Notifications_Message_InvalidGrid", grid?.id)
     );
     return;
   }
