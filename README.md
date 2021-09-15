@@ -64,14 +64,23 @@ npm run build <chrome/edge/firefox>
 
 ### Development Process
 
-To make development easier, you can start up a temporary development profile on [Mozilla Firefox](https://getfirefox.com) with the extension already loaded. Firefox will also automatically detect changes and reload the extension for you (read more about this on the [`web-ext` documentation pages](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Getting_started_with_web-ext)). Use the following commands to re-build the extension and re-load it in Firefox automatically as you make changes:
+To make development easier, you can start up a temporary development profile on [Mozilla Firefox](https://getfirefox.com) or [Google Chrome](google.com/chrome) with the extension already loaded. The browser will also automatically detect changes and reload the extension for you (read more about this on the [`web-ext` documentation pages](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Getting_started_with_web-ext)). Use the following commands **in parallel** to re-build the extension and re-load it in Firefox/Chrome automatically as you make changes:
+
+Firefox:
 
 ```sh
 npm run dev firefox
 npm run start:firefox
 ```
 
-Note you will need 2 terminal instances, one for each of the above commands, as they both remain running until you cancel them (use <kbd>CTRL</kbd> + <kbd>c</kbd> to cancel each process in your terminal(s)).
+Chrome:
+
+```sh
+npm run dev chrome
+npm run start:chrome
+```
+
+**Note that you will need 2 terminal instances**, one for each of the above commands, as they both remain running until you cancel them (use <kbd>CTRL</kbd> + <kbd>c</kbd> to cancel each process in your terminal(s)).
 
 [chrome-url]: https://chrome.google.com/webstore/detail/challenge-grid-autofill-extension/{{TODO:}}
 [chrome-image-version]: https://img.shields.io/chrome-web-store/v/{{TODO:}}?logo=googlechrome&style=for-the-badge
