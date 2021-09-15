@@ -82,13 +82,13 @@ npm run start:chrome
 
 **Note that you will need 2 terminal instances**, one for each of the above commands, as they both remain running until you cancel them (use <kbd>CTRL</kbd> + <kbd>c</kbd> to cancel each process in your terminal(s)).
 
-[chrome-url]: https://chrome.google.com/webstore/detail/challenge-grid-autofill-extension/{{TODO:}}
-[chrome-image-version]: https://img.shields.io/chrome-web-store/v/{{TODO:}}?logo=googlechrome&style=for-the-badge
-[chrome-image-users]: https://img.shields.io/chrome-web-store/d/{{TODO:}}?logo=googlechrome&style=for-the-badge
+[chrome-url]: https://chrome.google.com/webstore/detail/challenge-grid-autofill/nifoiollkgakfnbefnepgonkmhijehhl
+[chrome-image-version]: https://img.shields.io/chrome-web-store/v/nifoiollkgakfnbefnepgonkmhijehhl?logo=googlechrome&style=for-the-badge
+[chrome-image-users]: https://img.shields.io/chrome-web-store/d/nifoiollkgakfnbefnepgonkmhijehhl?logo=googlechrome&style=for-the-badge
 
-[edge-url]: https://microsoftedge.microsoft.com/addons/detail/challenge-grid-autofill-extension/{{TODO:}}
+[edge-url]: https://microsoftedge.microsoft.com/addons/detail/challenge-grid-autofill/memaigildfbodkbnbicnhjplglehionl
 [edge-image-version]: https://img.shields.io/badge/microsoft%20edge%20add--on-v1.0.0-blue?logo=microsoftedge&style=for-the-badge
 
-[firefox-url]: https://addons.mozilla.org/en-US/firefox/addon/challenge-grid-autofill-extension/
-[firefox-image-version]: https://img.shields.io/amo/v/challenge-grid-autofill-extension?color=blue&logo=firefox&style=for-the-badge
-[firefox-image-users]: https://img.shields.io/amo/users/challenge-grid-autofill-extension?color=blue&logo=firefox&style=for-the-badge
+[firefox-url]: https://addons.mozilla.org/en-US/firefox/addon/challenge-grid-autofill/
+[firefox-image-version]: https://img.shields.io/amo/v/challenge-grid-autofill?color=blue&logo=firefox&style=for-the-badge
+[firefox-image-users]: https://img.shields.io/amo/users/challenge-grid-autofill?color=blue&logo=firefox&style=for-the-badge
