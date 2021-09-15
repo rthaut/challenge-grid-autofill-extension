@@ -72,27 +72,20 @@ export default function CreateEditGridApp() {
 
   const resetSnackbar = () => {
     setSnackbarOpen(false);
+    // TODO: these could be used too, but only AFTER the snackbar finishes transitioning out
     // setSnackbarMessage("");
     // setSnackbarSeverity("success");
   };
 
-  const showSnackbarError = (message) => {
-    setSnackbarSeverity("error");
+  const showSnackbar = (message, severity) => {
+    setSnackbarSeverity(severity);
     setSnackbarMessage(message);
     setSnackbarOpen(true);
   };
 
-  const showSnackbarWarning = (message) => {
-    setSnackbarSeverity("warning");
-    setSnackbarMessage(message);
-    setSnackbarOpen(true);
-  };
-
-  const showSnackbarSuccess = (message) => {
-    setSnackbarSeverity("success");
-    setSnackbarMessage(message);
-    setSnackbarOpen(true);
-  };
+  const showSnackbarError = (message) => showSnackbar(message, "error");
+  const showSnackbarWarning = (message) => showSnackbar(message, "warning");
+  const showSnackbarSuccess = (message) => showSnackbar(message, "success");
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === "clickaway") {
