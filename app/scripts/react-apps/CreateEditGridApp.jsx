@@ -43,6 +43,7 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import GridMatrixTable from "./components/GridMatrixTable";
 import PageHeader from "./components/PageHeader";
 
+const FILE_TYPES = [".csv", ".tsv", ".txt"];
 const SPACING = 2;
 
 const HiddenFileInput = styled("input")({
@@ -209,36 +210,29 @@ export default function CreateEditGridApp() {
   };
 
   // #region CSV File Import
-  const processGridCSVFile = (file) =>
+  const getMatrixFromFile = (file) =>
     new Promise((resolve, reject) => {
-      if (file.type !== "" && file.type !== "text/csv") {
-        reject(browser.i18n.getMessage("ManageGrid_Error_InvalidFileType"));
-        return;
-      }
-
       const reader = new FileReader();
 
       reader.onload = (event) => {
-        const data = event.target.result.toString();
-        const csvMatrix = data
-          .replace(/\r?\n$/, "")
-          .split(/\r?\n/)
-          .slice(GRID_CONFIGS[grid.type]?.MATRIX_ROWS.length * -1) // take last # rows (dirty way to skip optional column headers)
-          .map(
-            (row) =>
-              row
-                .split(/,|\t/)
-                .map((cell) => cell.replace(/\"|\'/g, "").trim())
-                .slice(0, GRID_CONFIGS[grid.type]?.MATRIX_COLS.length) // take first # columns
-          );
-
-        const matrix = GetEmptyGridMatrix(grid.type).map((row, rowIndex) =>
-          row.map((col, colIndex) => csvMatrix?.[rowIndex]?.[colIndex] ?? "")
-        );
-
-        // console.table(matrix);
-        setGridProp("matrix", matrix);
-        resolve(IsGridMatrixValid(grid.type, matrix));
+        try {
+          const data = event.target.result.toString();
+          const matrix = data
+            .replace(/\r?\n$/, "")
+            .split(/\r?\n/)
+            .slice(GRID_CONFIGS[grid.type]?.MATRIX_ROWS.length * -1) // take last # rows (dirty way to skip optional column headers)
+            .map(
+              (row) =>
+                row
+                  .split(/,|\t/)
+                  .map((cell) => cell.replace(/\"|\'/g, "").trim())
+                  .slice(0, GRID_CONFIGS[grid.type]?.MATRIX_COLS.length) // take first # columns
+            );
+          resolve(matrix);
+        } catch (error) {
+          console.error(error);
+          reject(browser.i18n.getMessage("ManageGrid_Error_ParseFailure"));
+        }
       };
 
       reader.onerror = reject;
@@ -247,17 +241,39 @@ export default function CreateEditGridApp() {
     });
 
   const handleFileChange = async (event) => {
+    resetSnackbar();
+
     const file = event.target.files[0];
     // console.log(file);
 
+    if (!FILE_TYPES.some((ext) => file.name.endsWith(ext))) {
+      showSnackbarError(
+        browser.i18n.getMessage(
+          "ManageGrid_Error_InvalidFileTypeWithPlaceholder",
+          FILE_TYPES.join(", ")
+        )
+      );
+      return;
+    }
+
     if ((grid.title ?? "") === "") {
-      setGridProp("title", file.name.replace(".csv", ""));
+      let title = file.name;
+      FILE_TYPES.forEach((ext) => {
+        title = title.replace(ext, "");
+      });
+      setGridProp("title", title);
     }
 
     try {
-      resetSnackbar();
-      const isValid = await processGridCSVFile(file);
-      if (!isValid) {
+      let csvMatrix = await getMatrixFromFile(file);
+      const matrix = GetEmptyGridMatrix(grid.type).map((row, rowIndex) =>
+        row.map((col, colIndex) => csvMatrix?.[rowIndex]?.[colIndex] ?? "")
+      );
+
+      // console.table(matrix);
+      setGridProp("matrix", matrix);
+
+      if (!IsGridMatrixValid(grid.type, matrix)) {
         showSnackbarWarning(
           browser.i18n.getMessage("ManageGrid_Error_InvalidGridMatrix")
         );
@@ -370,7 +386,7 @@ export default function CreateEditGridApp() {
                 <>
                   <label htmlFor="csv-file-input">
                     <HiddenFileInput
-                      accept=".csv"
+                      accept={FILE_TYPES.join()}
                       id="csv-file-input"
                       type="file"
                       onChange={handleFileChange}
