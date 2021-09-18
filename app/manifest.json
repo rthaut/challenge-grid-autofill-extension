@@ -60,11 +60,12 @@
     "notifications",
     "storage"
   ],
-  "__chrome__minimum_chrome_version": "51.0",
+  "__chrome__minimum_chrome_version": "90",
+  "__edge__minimum_chrome_version": "91",
   "__firefox__applications": {
     "gecko": {
       "id": "challenge-grid-autofill@ryan.thaut.me",
-      "strict_min_version": "62.0"
+      "strict_min_version": "78"
     }
   }
 }
