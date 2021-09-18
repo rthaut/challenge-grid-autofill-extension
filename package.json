@@ -32,8 +32,8 @@
   "dependencies": {
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
-    "@mui/icons-material": "^5.0.0-rc.1",
-    "@mui/material": "^5.0.0-rc.1",
+    "@mui/icons-material": "^5.0.0",
+    "@mui/material": "^5.0.0",
     "debounce": "^1.2.1",
     "nanoid": "^3.1.25",
     "react": "^17.0.2",
@@ -45,10 +45,10 @@
     "eslint": "^7.32.0",
     "eslint-import-resolver-webpack": "^0.13.1",
     "eslint-plugin-import": "^2.24.2",
-    "eslint-plugin-react": "^7.25.1",
-    "prettier": "^2.3.2",
+    "eslint-plugin-react": "^7.25.2",
+    "prettier": "^2.4.1",
     "svg2png": "^4.1.1",
-    "web-ext": "^6.3.0",
+    "web-ext": "^6.4.0",
     "webextension-toolbox": "github:rthaut/webextension-toolbox#browserslist-string-vendor-version"
   }
 }
