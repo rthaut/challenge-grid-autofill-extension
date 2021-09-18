@@ -26,9 +26,9 @@
 
 | Web Browser | Information & Downloads |
 | ----------- | ----------------------- |
-| Google Chrome | [![Chrome Web Store][chrome-image-version]][chrome-url] [![Chrome Web Store][chrome-image-users]][chrome-url] |
+| Google Chrome | [![Chrome Web Store][chrome-image-version]][chrome-url] <!--[![Chrome Web Store][chrome-image-users]][chrome-url]--> |
 | Microsoft Edge | [![Microsoft Edge Add-on][edge-image-version]][edge-url] |
-| Mozilla Firefox | [![Mozilla Add-on][firefox-image-version]][firefox-url] [![Mozilla Add-on][firefox-image-users]][firefox-url] |
+| Mozilla Firefox | [![Mozilla Add-on][firefox-image-version]][firefox-url] <!--[![Mozilla Add-on][firefox-image-users]][firefox-url]--> |
 
 * * *
 
