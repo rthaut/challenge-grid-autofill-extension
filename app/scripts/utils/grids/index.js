@@ -8,6 +8,10 @@ export const GRID_CONFIGS = {
 
 export const GRIDS_STORAGE_KEY = "grids";
 
+/**
+ * Returns all grids from browser sync storage
+ * @returns {Promise<object[]>} the grids in storage
+ */
 export const GetGridsFromStorage = async () => {
   const { [GRIDS_STORAGE_KEY]: grids } = await browser.storage.sync.get({
     [GRIDS_STORAGE_KEY]: [],
@@ -17,6 +21,11 @@ export const GetGridsFromStorage = async () => {
   return grids;
 };
 
+/**
+ * Returns the specified grid (by `id`) from browser sync storage
+ * @param {string} id the ID of an existing grid
+ * @returns {Promise<object|undefined>} the grid from storage
+ */
 export const GetGridFromStorageByID = async (id) => {
   const grids = await GetGridsFromStorage();
 
@@ -26,6 +35,11 @@ export const GetGridFromStorageByID = async (id) => {
   return grid;
 };
 
+/**
+ * Instructs the active tab's content script to attempt to autofill the supplied `grid`
+ * @param {object} grid the grid object
+ * @returns {Promise<*>} the response from the active tab's content script
+ */
 export const FillGridInActiveTab = (grid) =>
   browser.tabs
     .query({
@@ -39,6 +53,11 @@ export const FillGridInActiveTab = (grid) =>
       })
     );
 
+/**
+ * Returns an empty matrix for the supplied grid `type`
+ * @param {string} type the type of grid
+ * @returns {string[][]} the empty matrix
+ */
 export const GetEmptyGridMatrix = (type) => {
   const { MATRIX_COLS: cols, MATRIX_ROWS: rows } = GRID_CONFIGS[type];
 
@@ -48,7 +67,7 @@ export const GetEmptyGridMatrix = (type) => {
 };
 
 /**
- * Returns the response to a challenge using the supplied grid matrix
+ * Returns the response to a given `challenge` using the supplied grid `type` and `matrix`
  * @param {string} type the type of the grid
  * @param {string[]} challenge the array of challenge grid cells (in A# format)
  * @param {string[][]} matrix the grid matrix
@@ -73,6 +92,12 @@ export const GetResponseForChallengeFromGridMatrix = (
   return response;
 };
 
+/**
+ * Returns `true` if the supplied `matrix` matches the dimensions of the supplied grid `type` AND every cell has one non-empty character
+ * @param {string} type the type of grid
+ * @param {string[][]} matrix the grid matrix
+ * @returns {boolean}
+ */
 export const IsGridMatrixValid = (type, matrix) => {
   const { MATRIX_COLS: cols, MATRIX_ROWS: rows } = GRID_CONFIGS[type];
 
@@ -86,5 +111,10 @@ export const IsGridMatrixValid = (type, matrix) => {
   );
 };
 
+/**
+ * Returns `true` if the supplied grid type is valid
+ * @param {string} type the type of grid
+ * @returns {boolean}
+ */
 export const IsGridTypeValid = (type) =>
   Object.keys(GRID_CONFIGS).includes(type);
