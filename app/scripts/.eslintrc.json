@@ -18,6 +18,12 @@
   },
   "root": true,
   "rules": {
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
     "no-useless-escape": "off"
   },
   "settings": {

@@ -88,7 +88,7 @@ export default function CreateEditGridApp() {
   const showSnackbarWarning = (message) => showSnackbar(message, "warning");
   const showSnackbarSuccess = (message) => showSnackbar(message, "success");
 
-  const handleCloseSnackbar = (event, reason) => {
+  const handleCloseSnackbar = (_event, reason) => {
     if (reason === "clickaway") {
       return;
     }
@@ -146,7 +146,7 @@ export default function CreateEditGridApp() {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={(evt) => window.close()} variant="contained" autoFocus>
+        <Button onClick={(_event) => window.close()} variant="contained" autoFocus>
           {browser.i18n.getMessage("ManageGrid_Alert_ButtonText_Close")}
         </Button>
       </DialogActions>

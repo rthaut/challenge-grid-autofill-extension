@@ -10,7 +10,7 @@ browser.runtime.onInstalled.addListener((details) => {
   console.log("Installation Details", details);
 });
 
-browser.runtime.onMessage.addListener((message, sender) => {
+browser.runtime.onMessage.addListener((message, _sender) => {
   // console.log("Background Runtime Message", sender, message);
   switch (message.action) {
     case "show-basic-notification":
@@ -52,7 +52,7 @@ const GenerateMenus = async () => {
         grid.title
       ),
       contexts: ["editable"],
-      onclick: (evt) => FillGridInActiveTab(grid),
+      onclick: (_event) => FillGridInActiveTab(grid),
     };
 
     // console.log("Creating Menu", menu);

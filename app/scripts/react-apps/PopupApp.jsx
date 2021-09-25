@@ -29,14 +29,14 @@ export default function PopupApp() {
 
   const [grids] = useGridStore();
 
-  const optionsClickHandler = (evt) =>
+  const optionsClickHandler = (_event) =>
     browser.runtime.openOptionsPage().then(() => window.close());
 
-  const createGridClickHandler = (evt) => OpenEditPage();
+  const createGridClickHandler = (_event) => OpenEditPage();
 
-  const editGridClickHandler = (id) => (evt) => OpenEditPage(id);
+  const editGridClickHandler = (id) => (_event) => OpenEditPage(id);
 
-  const fillGridClickHandler = (grid) => (evt) =>
+  const fillGridClickHandler = (grid) => (_event) =>
     FillGridInActiveTab(grid).then(() => window.close());
 
   return (
