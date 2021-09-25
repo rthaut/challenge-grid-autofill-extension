@@ -118,3 +118,22 @@ export const IsGridMatrixValid = (type, matrix) => {
  */
 export const IsGridTypeValid = (type) =>
   Object.keys(GRID_CONFIGS).includes(type);
+
+/**
+ * Opens the Create/Edit Grid page in a new popup window
+ * @param {string} [id] (optional) the ID of an existing grid to edit
+ * @returns {Promise<Windows.window>} the created window
+ */
+export const OpenEditPage = (id = null) => {
+  let url = browser.runtime.getURL("pages/create-edit-grid.html");
+  if (id) {
+    url += `?id=${id}`;
+  }
+
+  return browser.windows.create({
+    url,
+    type: "popup",
+    width: 600,
+    height: 820,
+  });
+};

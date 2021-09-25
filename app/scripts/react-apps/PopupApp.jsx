@@ -5,7 +5,7 @@ import { useTitle } from "react-use";
 import useGridStore from "./hooks/useGridStore";
 import useTheme from "./hooks/useTheme";
 
-import { FillGridInActiveTab } from "utils/grids";
+import { FillGridInActiveTab, OpenEditPage } from "utils/grids";
 
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -29,23 +29,15 @@ export default function PopupApp() {
 
   const [grids] = useGridStore();
 
-  const openEditPage = (id = null) => {
-    let url = browser.runtime.getURL("pages/create-edit-grid.html");
-    if (id) {
-      url += `?id=${id}`;
-    }
+  const optionsClickHandler = (evt) =>
+    browser.runtime.openOptionsPage().then(() => window.close());
 
-    return browser.windows.create({
-      url,
-      type: "popup",
-      width: 600,
-      height: 820,
-    });
-  };
+  const createGridClickHandler = (evt) => OpenEditPage();
 
-  const createGridClickHandler = (evt) => openEditPage();
-  const editGridClickHandler = (id) => (evt) => openEditPage(id);
-  const fillGridClickHandler = (grid) => (evt) => FillGridInActiveTab(grid);
+  const editGridClickHandler = (id) => (evt) => OpenEditPage(id);
+
+  const fillGridClickHandler = (grid) => (evt) =>
+    FillGridInActiveTab(grid).then(() => window.close());
 
   return (
     <ThemeProvider theme={theme}>
@@ -53,9 +45,7 @@ export default function PopupApp() {
       <Paper elevation={0}>
         <List dense disablePadding>
           <ListItem disableGutters>
-            <ListItemButton
-              onClick={(evt) => browser.runtime.openOptionsPage()}
-            >
+            <ListItemButton onClick={optionsClickHandler}>
               <ListItemIcon>
                 <SettingsIcon />
               </ListItemIcon>
