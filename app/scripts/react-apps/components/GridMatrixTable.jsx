@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 import { GRID_CONFIGS, IsGridTypeValid } from "utils/grids";
 
@@ -74,3 +75,9 @@ export default function GridMatrixTable({ type, matrix, setMatrixCell }) {
     </TableContainer>
   );
 }
+
+GridMatrixTable.propTypes = {
+  type: PropTypes.string.isRequired,
+  matrix: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
+  setMatrixCell: PropTypes.func.isRequired,
+};
