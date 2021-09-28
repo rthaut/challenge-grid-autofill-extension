@@ -4,14 +4,6 @@ import {
 } from "utils/grids";
 import { GetSetting } from "utils/settings";
 
-browser.runtime.onMessage.addListener((message, sender) => {
-  // console.log("Content Script Runtime Message", sender, message);
-  switch (message.action) {
-    case "fill-grid":
-      return AutoFillGrid(message.grid);
-  }
-});
-
 const ShowBasicNotification = (title, message) =>
   browser.runtime.sendMessage({
     action: "show-basic-notification",
@@ -120,3 +112,11 @@ const AutoFillGrid = async (grid) => {
     form.submit();
   }
 };
+
+browser.runtime.onMessage.addListener((message, _sender) => {
+  // console.log("Content Script Runtime Message", sender, message);
+  switch (message.action) {
+    case "fill-grid":
+      return AutoFillGrid(message.grid);
+  }
+});

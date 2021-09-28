@@ -41,19 +41,6 @@
     "page": "pages/options.html",
     "open_in_tab": false
   },
-  "content_scripts": [
-    {
-      "all_frames": true,
-      "js": [
-        "scripts/content-script.js"
-      ],
-      "match_about_blank": true,
-      "matches": [
-        "<all_urls>"
-      ],
-      "run_at": "document_idle"
-    }
-  ],
   "permissions": [
     "activeTab",
     "contextMenus",

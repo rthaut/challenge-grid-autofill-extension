@@ -42,15 +42,16 @@ export const GetGridFromStorageByID = async (id) => {
  */
 export const FillGridInActiveTab = (grid) =>
   browser.tabs
-    .query({
-      active: true,
-      currentWindow: true,
-    })
+    .executeScript({ file: "/scripts/content-script.js" })
+    .then(() => browser.tabs.query({ active: true, currentWindow: true }))
     .then((tabs) =>
       browser.tabs.sendMessage(tabs[0].id, {
         action: "fill-grid",
         grid,
       })
+    )
+    .catch((error) =>
+      console.error("Failed to fill grid in active tab", error)
     );
 
 /**
