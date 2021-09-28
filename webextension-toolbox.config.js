@@ -5,6 +5,21 @@ const TerserPlugin = require("terser-webpack-plugin");
 /* global module */
 module.exports = {
   webpack: (config, { dev }) => {
+    config.module = {
+      ...config.module,
+      rules: [
+        ...config.module.rules,
+        {
+          test: /\.css$/i,
+          use: ["style-loader", "css-loader"],
+        },
+        {
+          test: /\.(woff|woff2|eot|ttf|otf)$/i,
+          type: "asset/resource",
+        },
+      ],
+    };
+
     config.optimization = {
       ...config.optimization,
       minimizer: [
