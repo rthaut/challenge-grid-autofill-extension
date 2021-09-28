@@ -1,4 +1,4 @@
-# Challenge Grid Autofill v1.0.1
+# Challenge Grid Autofill v1.1.0
 
 [![Chrome Web Store][chrome-image-version]][chrome-url] [![Microsoft Edge Add-on][edge-image-version]][edge-url] [![Mozilla Add-on][firefox-image-version]][firefox-url]
 
@@ -87,7 +87,7 @@ npm run start:chrome
 [chrome-image-users]: https://img.shields.io/chrome-web-store/d/nifoiollkgakfnbefnepgonkmhijehhl?logo=googlechrome&style=for-the-badge
 
 [edge-url]: https://microsoftedge.microsoft.com/addons/detail/challenge-grid-autofill/memaigildfbodkbnbicnhjplglehionl
-[edge-image-version]: https://img.shields.io/badge/microsoft%20edge%20add--on-v1.0.1-blue?logo=microsoftedge&style=for-the-badge
+[edge-image-version]: https://img.shields.io/badge/microsoft%20edge%20add--on-v1.1.0-blue?logo=microsoftedge&style=for-the-badge
 
 [firefox-url]: https://addons.mozilla.org/en-US/firefox/addon/challenge-grid-autofill/
 [firefox-image-version]: https://img.shields.io/amo/v/challenge-grid-autofill?color=blue&logo=firefox&style=for-the-badge
