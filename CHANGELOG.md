@@ -30,3 +30,4 @@ Initial Release
 [unreleased]: https://github.com/rthaut/challenge-grid-autofill-extension/compare/v1.1.0...HEAD
 [1.1.0]: https://github.com/rthaut/challenge-grid-autofill-extension/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/rthaut/challenge-grid-autofill-extension/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/rthaut/challenge-grid-autofill-extension/commits/v1.0.0
