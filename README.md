@@ -27,7 +27,7 @@
 | Web Browser | Information & Downloads |
 | ----------- | ----------------------- |
 | Google Chrome | [![Chrome Web Store][chrome-image-version]][chrome-url] <!--[![Chrome Web Store][chrome-image-users]][chrome-url]--> |
-| Microsoft Edge | [![Microsoft Edge Add-on][edge-image-version]][edge-url] |
+| Microsoft Edge | [![Microsoft Edge Add-on][edge-image-version]][edge-url] <!--[![Microsoft Edge Add-on][edge-image-users]][edge-url]--> |
 | Mozilla Firefox | [![Mozilla Add-on][firefox-image-version]][firefox-url] <!--[![Mozilla Add-on][firefox-image-users]][firefox-url]--> |
 
 * * *
@@ -87,7 +87,8 @@ npm run start:chrome
 [chrome-image-users]: https://img.shields.io/chrome-web-store/d/nifoiollkgakfnbefnepgonkmhijehhl?logo=googlechrome&style=for-the-badge
 
 [edge-url]: https://microsoftedge.microsoft.com/addons/detail/challenge-grid-autofill/memaigildfbodkbnbicnhjplglehionl
-[edge-image-version]: https://img.shields.io/badge/microsoft%20edge%20add--on-v1.1.0-blue?logo=microsoftedge&style=for-the-badge
+[edge-image-version]: https://img.shields.io/badge/dynamic/json?logo=microsoftedge&style=for-the-badge&label=edge%20add-on&prefix=v&query=%24.version&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fmemaigildfbodkbnbicnhjplglehionl
+[edge-image-users]: https://img.shields.io/badge/dynamic/json?logo=microsoftedge&style=for-the-badge&label=users&query=%24.activeInstallCount&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fmemaigildfbodkbnbicnhjplglehionl
 
 [firefox-url]: https://addons.mozilla.org/en-US/firefox/addon/challenge-grid-autofill/
 [firefox-image-version]: https://img.shields.io/amo/v/challenge-grid-autofill?color=blue&logo=firefox&style=for-the-badge
