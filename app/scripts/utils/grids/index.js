@@ -17,7 +17,6 @@ export const GetGridsFromStorage = async () => {
     [GRIDS_STORAGE_KEY]: [],
   });
 
-  // console.log("Grids", grids);
   return grids;
 };
 
@@ -31,28 +30,56 @@ export const GetGridFromStorageByID = async (id) => {
 
   const grid = grids.find((grid) => grid.id === id);
 
-  // console.log(id, grid);
   return grid;
 };
 
 /**
- * Instructs the active tab's content script to attempt to autofill the supplied `grid`
+ * Injects the content script into the active tab and attempts to autofill the supplied `grid`
  * @param {object} grid the grid object
- * @returns {Promise<*>} the response from the active tab's content script
+ * @returns {Promise<void>}
  */
-export const FillGridInActiveTab = (grid) =>
-  browser.tabs
-    .executeScript({ file: "/scripts/content-script.js" })
-    .then(() => browser.tabs.query({ active: true, currentWindow: true }))
-    .then((tabs) =>
-      browser.tabs.sendMessage(tabs[0].id, {
-        action: "fill-grid",
-        grid,
-      })
-    )
-    .catch((error) =>
-      console.error("Failed to fill grid in active tab", error)
-    );
+export const FillGridInActiveTab = async (grid) => {
+  try {
+    const activeTab = await browser.tabs
+      .query({ active: true, currentWindow: true })
+      .then((tabs) => tabs[0]);
+
+    if (activeTab) {
+      return await FillGridInTab(activeTab.id, grid);
+    }
+  } catch (error) {
+    console.error("Failed to fill grid in active tab:", error);
+  }
+};
+
+/**
+ * Injects the content script into the specified tab and attempts to autofill the supplied `grid`
+ * @param {number} tabId the ID of the tab to target
+ * @param {object} grid the grid object
+ * @returns {Promise<void>}
+ */
+export const FillGridInTab = async (tabId, grid) => {
+  try {
+    const injectionResults = await browser.scripting.executeScript({
+      target: { tabId, allFrames: true },
+      files: ["scripts/content-script.js"],
+    });
+
+    // NOTE: Chrome throws a runtime error on `executeScript` if the script fails to load/execute, but Firefox has an `error` property on the result object, so we just throw the error if it exists to be consistent
+    for (const injectionResult of injectionResults) {
+      if (injectionResult.error) {
+        throw injectionResult.error;
+      }
+    }
+
+    await browser.tabs.sendMessage(tabId, {
+      action: "fill-grid",
+      grid,
+    });
+  } catch (error) {
+    console.error("Failed to fill grid in tab:", error);
+  }
+};
 
 /**
  * Returns an empty matrix for the supplied grid `type`
@@ -89,7 +116,6 @@ export const GetResponseForChallengeFromGridMatrix = (
     response += matrix[rows.indexOf(row)][cols.indexOf(col)];
   });
 
-  // console.log({ response });
   return response;
 };
 

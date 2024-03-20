@@ -11,6 +11,6 @@ export const GetSetting = async (key, defaultValue = undefined) => {
   });
 
   const value = settings[key] ?? defaultValue ?? DEFAULT_SETTINGS[key];
-  // console.log(key, value);
+
   return value;
 };

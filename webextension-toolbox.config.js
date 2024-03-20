@@ -1,10 +1,10 @@
 /* global require */
 const path = require("path");
-const TerserPlugin = require("terser-webpack-plugin");
+const webpack = require("webpack");
 
 /* global module */
 module.exports = {
-  webpack: (config, { dev }) => {
+  webpack: (config, { dev, vendor }) => {
     config.module = {
       ...config.module,
       rules: [
@@ -20,50 +20,22 @@ module.exports = {
       ],
     };
 
-    config.optimization = {
-      ...config.optimization,
-      minimizer: [
-        new TerserPlugin({
-          terserOptions: {
-            compress: {
-              pure_funcs: [
-                // drop all console functions except errors
-                "console.assert",
-                "console.clear",
-                "console.count",
-                "console.countReset",
-                "console.debug",
-                "console.dir",
-                "console.dirxml",
-                //"console.error",
-                //"console.exception",
-                "console.group",
-                "console.groupCollapsed",
-                "console.groupEnd",
-                "console.info",
-                "console.log",
-                "console.profile",
-                "console.profileEnd",
-                "console.table",
-                "console.time",
-                "console.timeEnd",
-                "console.timeLog",
-                "console.timeStamp",
-                "console.trace",
-                "console.warn",
-              ],
-            },
-          },
-        }),
-      ],
-    };
-
+    // TODO: should we drop the aliases and just use actual relative paths? if not, should we alias the `scripts` directory instead? (would also need to update jsconfig.json to match)
     config.resolve = {
       alias: {
         utils: path.resolve(__dirname, "app/scripts/utils/"),
       },
       extensions: [".js", ".json", ".jsx"],
     };
+
+    // TODO: it would be nice to drop the polyfill, but it seems chrome still only recognizes the `chrome` namespace...
+    if (["chrome", "opera", "edge"].includes(vendor)) {
+      config.plugins.push(
+        new webpack.ProvidePlugin({
+          browser: "webextension-polyfill",
+        })
+      );
+    }
 
     return config;
   },

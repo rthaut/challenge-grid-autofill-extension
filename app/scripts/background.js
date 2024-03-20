@@ -1,31 +1,44 @@
-import { debounce } from "debounce";
-
 import {
   GRIDS_STORAGE_KEY,
+  GetGridFromStorageByID,
   GetGridsFromStorage,
-  FillGridInActiveTab,
+  FillGridInTab,
 } from "utils/grids";
 
-browser.runtime.onInstalled.addListener((details) => {
-  console.log("Installation Details", details);
-});
-
-browser.runtime.onMessage.addListener((message, _sender) => {
-  // console.log("Background Runtime Message", sender, message);
-  switch (message.action) {
-    case "show-basic-notification":
-      return ShowBasicNotification(message.notification);
+const OnMenuClicked = async (info, tab) => {
+  const grid = await GetGridFromStorageByID(info.menuItemId);
+  if (!grid) {
+    return;
   }
-});
 
-browser.storage.onChanged.addListener(
-  debounce((changes, area) => {
-    // console.log("Storage Changed", changes, area);
-    if (area === "sync" && Object.keys(changes).includes(GRIDS_STORAGE_KEY)) {
-      GenerateMenus();
-    }
-  }, 1000)
-);
+  await FillGridInTab(tab.id, grid);
+};
+
+const CreateMenus = async () => {
+  await browser.contextMenus.removeAll();
+
+  if (!browser.contextMenus.onClicked.hasListener(OnMenuClicked)) {
+    browser.contextMenus.onClicked.addListener(OnMenuClicked);
+  }
+
+  const grids = await GetGridsFromStorage();
+  if (!grids.length) {
+    return;
+  }
+
+  grids.forEach((grid) => {
+    const menu = {
+      id: grid.id,
+      title: browser.i18n.getMessage(
+        "Menu_Title_AutofillGridWithPlaceholder",
+        grid.title
+      ),
+      contexts: ["editable"],
+    };
+
+    browser.contextMenus.create(menu);
+  });
+};
 
 const ShowBasicNotification = ({ title, message }) =>
   browser.notifications.create({
@@ -39,25 +52,19 @@ const ShowBasicNotification = ({ title, message }) =>
       message + "\n\n" + browser.i18n.getMessage("Notifications_HelpMessage"),
   });
 
-const GenerateMenus = async () => {
-  await browser.contextMenus.removeAll();
+browser.runtime.onInstalled.addListener(() => {
+  CreateMenus();
+});
 
-  const grids = await GetGridsFromStorage();
+browser.runtime.onMessage.addListener((message, _sender) => {
+  switch (message.action) {
+    case "show-basic-notification":
+      return ShowBasicNotification(message.notification);
+  }
+});
 
-  grids.forEach((grid) => {
-    const menu = {
-      id: grid.id,
-      title: browser.i18n.getMessage(
-        "Menu_Title_AutofillGridWithPlaceholder",
-        grid.title
-      ),
-      contexts: ["editable"],
-      onclick: (_event) => FillGridInActiveTab(grid),
-    };
-
-    // console.log("Creating Menu", menu);
-    browser.contextMenus.create(menu);
-  });
-};
-
-GenerateMenus();
+browser.storage.onChanged.addListener((changes, area) => {
+  if (area === "sync" && Object.keys(changes).includes(GRIDS_STORAGE_KEY)) {
+    CreateMenus();
+  }
+});

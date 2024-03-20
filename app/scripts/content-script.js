@@ -37,10 +37,9 @@ const GetChallengeFromPage = (patterns) => {
   }
 
   if (!challenges.length) {
-    console.warn("Failed to find challenge(s) in document text", text);
+    console.warn("Failed to find challenge(s) in document text:", text);
   }
 
-  // console.log({ challenges });
   return challenges;
 };
 
@@ -52,7 +51,6 @@ const AutoFillGrid = async (grid) => {
     RESPONSE_INPUT_FIELD_QUERY_SELECTOR: querySelector,
   } = GRID_CONFIGS[type];
 
-  // console.table(matrix);
   if (!matrix) {
     ShowBasicNotification(
       browser.i18n.getMessage("Notifications_Title_InvalidGrid"),
@@ -114,7 +112,6 @@ const AutoFillGrid = async (grid) => {
 };
 
 browser.runtime.onMessage.addListener((message, _sender) => {
-  // console.log("Content Script Runtime Message", sender, message);
   switch (message.action) {
     case "fill-grid":
       return AutoFillGrid(message.grid);
