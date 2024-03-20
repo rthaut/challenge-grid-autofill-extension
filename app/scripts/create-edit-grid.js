@@ -1,8 +1,10 @@
 import "./react-apps/fonts";
 
 import * as React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 
 import CreateEditGridApp from "./react-apps/CreateEditGridApp";
 
-ReactDOM.render(<CreateEditGridApp />, document.querySelector("#app"));
+const container = document.querySelector("#app");
+const root = createRoot(container);
+root.render(<CreateEditGridApp />);

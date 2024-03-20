@@ -230,7 +230,7 @@ export default function CreateEditGridApp() {
             );
           resolve(matrix);
         } catch (error) {
-          console.error(error);
+          console.error("Failed to parse file contents:", error);
           reject(browser.i18n.getMessage("ManageGrid_Error_ParseFailure"));
         }
       };
@@ -244,7 +244,6 @@ export default function CreateEditGridApp() {
     resetSnackbar();
 
     const file = event.target.files[0];
-    // console.log(file);
 
     if (!FILE_TYPES.some((ext) => file.name.endsWith(ext))) {
       showSnackbarError(
@@ -270,7 +269,6 @@ export default function CreateEditGridApp() {
         row.map((col, colIndex) => csvMatrix?.[rowIndex]?.[colIndex] ?? "")
       );
 
-      // console.table(matrix);
       setGridProp("matrix", matrix);
 
       if (!IsGridMatrixValid(grid.type, matrix)) {
@@ -290,7 +288,6 @@ export default function CreateEditGridApp() {
   // #endregion CSV File Import
 
   const handleGridSave = () => {
-    // console.table(grid.matrix);
     if (isNewGrid) {
       const newId = nanoid();
       grid.id = newId;
