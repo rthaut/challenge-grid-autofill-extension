@@ -62,7 +62,7 @@ export const FillGridInTab = async (tabId, grid) => {
   try {
     const injectionResults = await browser.scripting.executeScript({
       target: { tabId, allFrames: true },
-      files: ["scripts/content-script.js"],
+      files: ["/scripts/content-script.js"],
     });
 
     // NOTE: Chrome throws a runtime error on `executeScript` if the script fails to load/execute, but Firefox has an `error` property on the result object, so we just throw the error if it exists to be consistent
