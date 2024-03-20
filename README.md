@@ -1,4 +1,4 @@
-# Challenge Grid Autofill v1.1.0
+# Challenge Grid Autofill v2.0.0
 
 [![Chrome Web Store][chrome-image-version]][chrome-url] [![Microsoft Edge Add-on][edge-image-version]][edge-url] [![Mozilla Add-on][firefox-image-version]][firefox-url]
 
