@@ -1,8 +1,33 @@
+# Logs
+logs
 *.log
+npm-debug.log*
 
-node_modules/
+# Runtime data
+pids
+*.pid
+*.seed
 
-dist/
-packages/
+# Dependency directories
+node_modules
+jspm_packages
 
-private/
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Build
+dist
+
+# Miscellaneous
+certs
+Thumbs.db
+
+packages/*
+private/*
+
+# wxt
+.output
+.wxt

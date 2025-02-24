@@ -1,0 +1,192 @@
+{
+  "ExtensionName": {
+    "message": "Challenge Grid Autofill",
+    "description": "The name of the application"
+  },
+  "ExtensionShortName": {
+    "message": "gridautofill",
+    "description": "The short_name (maximum of 12 characters) is a short version of the application's name"
+  },
+  "ExtensionDescription": {
+    "message": "Provides a way to parse challenge prompts and autofill the corresponding response for websites using security/challenge grids.",
+    "description": "The description (maximum of 132 characters) of the application"
+  },
+  "BrowserActionTitle": {
+    "message": "Challenge Grid Autofill",
+    "description": "The title of the browser action button"
+  },
+  "GridType_Title_Deepnet": {
+    "message": "Deepnet GridID"
+  },
+  "GridType_Title_Entrust": {
+    "message": "Entrust eGrid"
+  },
+  "Popup_CreateGrid_Text": {
+    "message": "Add a New Grid"
+  },
+  "Popup_Options_Text": {
+    "message": "Options"
+  },
+  "ManageGrid_ButtonText_ImportCSV": {
+    "message": "Import from CSV File"
+  },
+  "ManageGrid_ButtonText_CreateGrid": {
+    "message": "Create Grid"
+  },
+  "ManageGrid_ButtonText_DeleteGrid": {
+    "message": "Delete Grid"
+  },
+  "ManageGrid_ButtonText_UpdateGrid": {
+    "message": "Update Grid"
+  },
+  "ManageGrid_LabelText_GridType": {
+    "message": "Grid Type"
+  },
+  "ManageGrid_LabelText_GridTitle": {
+    "message": "Grid Title"
+  },
+  "ManageGrid_Title_CreateGrid": {
+    "message": "Create a New Grid"
+  },
+  "ManageGrid_Title_EditGrid": {
+    "message": "Edit Grid"
+  },
+  "ManageGrid_Title_EditGridWithPlaceholders": {
+    "message": "Edit $TYPE$ Grid \"$ID$\"",
+    "placeholders": {
+      "id": {
+        "content": "$1"
+      },
+      "type": {
+        "content": "$2"
+      }
+    }
+  },
+  "ManageGrid_Error_InvalidFileTypeWithPlaceholder": {
+    "message": "File type must be one of the following: $TYPES$",
+    "placeholders": {
+      "types": {
+        "content": "$1"
+      }
+    }
+  },
+  "ManageGrid_Error_InvalidGridID": {
+    "message": "Failed to load grid from storage"
+  },
+  "ManageGrid_Error_InvalidGridMatrix": {
+    "message": "The grid is not valid"
+  },
+  "ManageGrid_Error_ParseFailure": {
+    "message": "Failed to parse file contents"
+  },
+  "ManageGrid_Error_GenericWithPlaceholder": {
+    "message": "An error occurred: $ERROR$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "ManageGrid_Message_GridCreated": {
+    "message": "Grid created successfully. You may now close this window or make additional changes."
+  },
+  "ManageGrid_Message_GridUpdated": {
+    "message": "Grid updated successfully. You may now close this window or make additional changes."
+  },
+  "ManageGrid_Prompt_ConfirmDeleteWithPlaceholder": {
+    "message": "Are you sure you want to delete grid \"$ID$\"?",
+    "placeholders": {
+      "id": {
+        "content": "$1"
+      }
+    }
+  },
+  "ManageGrid_Prompt_ButtonText_Confirm": {
+    "message": "Yes"
+  },
+  "ManageGrid_Prompt_ButtonText_Deny": {
+    "message": "No"
+  },
+  "ManageGrid_Alert_GridDeleted": {
+    "message": "Grid successfully deleted. Click the OK button to close this window automatically."
+  },
+  "ManageGrid_Alert_ButtonText_Close": {
+    "message": "OK"
+  },
+  "Menu_Title_AutofillGridWithPlaceholder": {
+    "message": "Autofill Grid \"$TITLE$\"",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "Notifications_Title_NameWithPlaceholder": {
+    "message": "Challenge Grid Autofill - $TITLE$",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "Notifications_Title_AutofillError": {
+    "message": "Failed to Autofill Response"
+  },
+  "Notifications_Message_AutofillError": {
+    "message": "The challenge response (\"$RESPONSE$\") could not be automatically filled into the input field(s).",
+    "placeholders": {
+      "response": {
+        "content": "$1"
+      }
+    }
+  },
+  "Notifications_Title_InvalidGrid": {
+    "message": "Invalid Grid"
+  },
+  "Notifications_Message_InvalidGrid": {
+    "message": "The grid with ID \"$ID$\" could not be found.",
+    "placeholders": {
+      "id": {
+        "content": "$1"
+      }
+    }
+  },
+  "Notifications_Title_MissingChallenge": {
+    "message": "Missing Challenge Prompt"
+  },
+  "Notifications_Message_MissingChallenge": {
+    "message": "There was no challenge prompt found on the page."
+  },
+  "Notifications_Title_ResponseError": {
+    "message": "Challenge Response Error"
+  },
+  "Notifications_Message_ResponseError": {
+    "message": "A response could not be generated for the challenge: $CHALLENGE$",
+    "placeholders": {
+      "challenge": {
+        "content": "$1"
+      }
+    }
+  },
+  "Notifications_HelpMessage": {
+    "message": "Please contact the extension author if this problem persists."
+  },
+  "Options_SettingLabel_AutoSubmitForm": {
+    "message": "Automatically Submit Form"
+  },
+  "Options_SettingDescription_AutoSubmitForm": {
+    "message": "Enable to automatically submit the challenge form after entering the response"
+  },
+  "Options_SettingLabel_ForceDarkMode": {
+    "message": "Force Dark Mode"
+  },
+  "Options_SettingDescription_ForceDarkMode": {
+    "message": "Enable to force this extension to use dark mode (regardless of your system preferences)"
+  },
+  "Options_BugEnhancement_QuestionText": {
+    "message": "Found a bug? Have an idea for an enhancement?"
+  },
+  "Options_BugEnhancement_LinkText": {
+    "message": "Please submit an issue on the GitHub repository"
+  }
+}
