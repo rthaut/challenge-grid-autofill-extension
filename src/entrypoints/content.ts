@@ -1,7 +1,7 @@
 import {
+  GetConfigValuesWithDefaultsForGrid,
+  GetResponseForChallengeFromMatrix,
   type Grid,
-  GRID_CONFIGS,
-  GetResponseForChallengeFromGridMatrix,
 } from "@/utils/grids";
 import { isRuntimeMessage } from "@/utils/messages";
 import { GetSetting } from "@/utils/settings";
@@ -46,12 +46,7 @@ const GetChallengeFromPage = (patterns: RegExp[]) => {
 };
 
 const AutoFillGrid = async (grid: Grid) => {
-  const { matrix, type } = grid;
-
-  const {
-    CHALLENGE_PATTERNS: patterns,
-    RESPONSE_INPUT_FIELD_QUERY_SELECTOR: querySelector,
-  } = GRID_CONFIGS[type as keyof typeof GRID_CONFIGS];
+  const { matrix } = grid;
 
   if (!matrix) {
     ShowBasicNotification(
@@ -60,8 +55,11 @@ const AutoFillGrid = async (grid: Grid) => {
     );
     return;
   }
+  const config = GetConfigValuesWithDefaultsForGrid(grid);
 
-  const challenge = GetChallengeFromPage(patterns);
+  // TODO: do we need to validate the configs here?
+
+  const challenge = GetChallengeFromPage(config.challengePatterns);
   if (!Array.isArray(challenge) || challenge.length < 1) {
     // TODO: come up with a way for the user to manually enter the challenge
     ShowBasicNotification(
@@ -71,10 +69,11 @@ const AutoFillGrid = async (grid: Grid) => {
     return;
   }
 
-  const response = GetResponseForChallengeFromGridMatrix(
-    type as keyof typeof GRID_CONFIGS,
+  const response = GetResponseForChallengeFromMatrix(
     challenge,
     matrix,
+    config.matrixCols,
+    config.matrixRows,
   );
   if (response.length !== challenge.length) {
     ShowBasicNotification(
@@ -87,7 +86,9 @@ const AutoFillGrid = async (grid: Grid) => {
     return;
   }
 
-  const inputs = document.querySelectorAll<HTMLInputElement>(querySelector);
+  const inputs = document.querySelectorAll<HTMLInputElement>(
+    config.responseInputFieldQuerySelector,
+  );
   if (inputs.length === 1) {
     // single input field
     inputs[0].setAttribute("value", response);

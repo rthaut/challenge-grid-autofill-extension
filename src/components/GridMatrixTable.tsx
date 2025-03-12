@@ -1,5 +1,4 @@
-import { GRID_CONFIGS, IsGridTypeValid } from "@/utils/grids";
-
+import { type GridConfig } from "@/utils/grids";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -19,19 +18,20 @@ const StyledOutlinedInput = styled(OutlinedInput)({
 });
 
 export default function GridMatrixTable({
-  type,
+  cols,
+  rows,
+  cellLength,
   matrix,
   setMatrixCell,
 }: {
-  type: keyof typeof GRID_CONFIGS;
+  cols: GridConfig["matrixCols"];
+  rows: GridConfig["matrixRows"];
+  cellLength: GridConfig["matrixCellLength"];
   matrix: string[][] | undefined;
   setMatrixCell: (row: number, col: number, value: string) => void;
 }) {
-  if (!IsGridTypeValid(type)) {
-    return null;
-  }
-
-  const { MATRIX_COLS, MATRIX_ROWS } = GRID_CONFIGS[type];
+  console.log("config", { cols, rows, cellLength });
+  console.log("matrix", matrix);
 
   return (
     <TableContainer>
@@ -39,7 +39,7 @@ export default function GridMatrixTable({
         <TableHead>
           <TableRow sx={{ th: { border: 0 } }}>
             <TableCell align="center" padding="none" />
-            {MATRIX_COLS.map((col) => (
+            {cols.map((col) => (
               <TableCell key={col} align="center" padding="none">
                 {col}
               </TableCell>
@@ -47,7 +47,7 @@ export default function GridMatrixTable({
           </TableRow>
         </TableHead>
         <TableBody>
-          {MATRIX_ROWS.map((row, rowIndex) => (
+          {rows.map((row, rowIndex) => (
             <TableRow key={rowIndex} sx={{ "td, th": { border: 0 } }}>
               <TableCell
                 component="th"
@@ -57,11 +57,11 @@ export default function GridMatrixTable({
               >
                 {row}
               </TableCell>
-              {MATRIX_COLS.map((col, colIndex) => (
+              {cols.map((col, colIndex) => (
                 <TableCell key={colIndex} align="center" padding="none">
                   <StyledOutlinedInput
                     color="primary"
-                    inputProps={{ maxLength: 1 }}
+                    inputProps={{ maxLength: cellLength }}
                     margin="none"
                     onChange={(event) =>
                       setMatrixCell(rowIndex, colIndex, event.target.value)

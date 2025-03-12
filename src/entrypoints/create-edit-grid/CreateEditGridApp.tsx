@@ -11,14 +11,19 @@ import useQueryParam from "@/hooks/useQueryParam";
 import useTheme from "@/hooks/useTheme";
 
 import {
+  type CustomGrid,
   type Grid,
+  type GridConfig,
   type GridType,
-  GetEmptyGridMatrix,
-  GRID_CONFIGS,
+  type StandardGrid,
   GRID_TYPES,
+  GetConfigValuesWithDefaultsForGrid,
+  GetEmptyGridMatrix,
+  IsCustomGridConfigValidForMatrix,
   IsGridMatrixValid,
   IsGridTypeValid,
   IsGridValid,
+  IsStandardGridType,
 } from "@/utils/grids";
 
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -46,6 +51,7 @@ import Snackbar, { type SnackbarCloseReason } from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import { type Breakpoint, styled, ThemeProvider } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 
 const FILE_TYPES = [".csv", ".tsv", ".txt"];
 const SPACING = 2;
@@ -54,7 +60,9 @@ const HiddenFileInput = styled("input")({
   display: "none",
 });
 
-const initialGrid: Omit<Grid, "type"> & { type: GridType | undefined } = {
+const initialGrid: Omit<Grid, "type"> & {
+  type: GridType | undefined;
+} = {
   id: "",
   type: undefined,
   title: "",
@@ -175,8 +183,11 @@ export default function CreateEditGridApp() {
 
   const [grids, setGrids] = useGridStore();
 
-  const [grid, { set: setGridProp, setAll: setAllGridProps }] =
+  const [grid, { set: setGridProp, setAll: setGrid }] =
     useMap<Partial<Grid>>(initialGrid);
+
+  const [config, { set: setConfigProp, setAll: setConfig }] =
+    useMap<GridConfig>(GetConfigValuesWithDefaultsForGrid(grid));
 
   React.useEffect(() => {
     if (id !== undefined && id !== null && id !== "") {
@@ -197,7 +208,7 @@ export default function CreateEditGridApp() {
             ),
           );
         }
-        setAllGridProps(gridFromStorage);
+        setGrid(gridFromStorage);
       } else {
         // setPageTitle(browser.i18n.getMessage("ManageGrid_Title_CreateGrid"));
         // showSnackbarError(
@@ -210,18 +221,13 @@ export default function CreateEditGridApp() {
   React.useEffect(() => {
     if (isNewGrid) {
       setGridProp("id", nanoid());
-      setGridProp(
-        "matrix",
-        IsGridTypeValid(grid?.type) ? GetEmptyGridMatrix(grid.type) : [[]],
-      );
     }
-  }, [grid?.type, isNewGrid]);
+  }, [isNewGrid]);
 
   const setMatrixCell = (row: number, col: number, value: string) => {
     let { matrix, type } = grid;
     if (matrix === undefined) {
-      if (!IsGridTypeValid(type)) return;
-      matrix = GetEmptyGridMatrix(type);
+      matrix = GetEmptyGridMatrix(config.matrixCols, config.matrixRows);
     }
     matrix[row][col] = value;
     setGridProp("matrix", matrix);
@@ -238,13 +244,13 @@ export default function CreateEditGridApp() {
           const matrix = data
             ?.replace(/\r?\n$/, "")
             .split(/\r?\n/)
-            .slice(GRID_CONFIGS[grid.type!]?.MATRIX_ROWS.length * -1) // take last # rows (dirty way to skip optional column headers)
+            .slice(config.matrixRows.length * -1) // take last # rows (dirty way to skip optional column headers)
             .map(
               (row) =>
                 row
                   .split(/,|\t/)
                   .map((cell) => cell.replace(/\"|\'/g, "").trim())
-                  .slice(0, GRID_CONFIGS[grid.type!]?.MATRIX_COLS.length), // take first # columns
+                  .slice(0, config.matrixCols.length), // take first # columns
             );
           resolve(matrix);
         } catch (error) {
@@ -288,13 +294,23 @@ export default function CreateEditGridApp() {
 
     try {
       let csvMatrix = await getMatrixFromFile(file);
-      const matrix = GetEmptyGridMatrix(grid.type!).map((row, rowIndex) =>
+      const matrix = GetEmptyGridMatrix(
+        config.matrixCols,
+        config.matrixRows,
+      ).map((row, rowIndex) =>
         row.map((col, colIndex) => csvMatrix?.[rowIndex]?.[colIndex] ?? ""),
       );
 
       setGridProp("matrix", matrix);
 
-      if (!IsGridMatrixValid(grid.type!, matrix)) {
+      if (
+        !IsGridMatrixValid(
+          matrix,
+          config.matrixCols.length,
+          config.matrixRows.length,
+          config.matrixCellLength,
+        )
+      ) {
         showSnackbarWarning(
           browser.i18n.getMessage("ManageGrid_Error_InvalidGridMatrix"),
         );
@@ -311,21 +327,25 @@ export default function CreateEditGridApp() {
   // #endregion CSV File Import
 
   const handleGridSave = () => {
+    const gridToSave = IsStandardGridType(grid.type)
+      ? (grid as StandardGrid)
+      : ({ ...grid, type: "custom", ...config } as CustomGrid);
+
     if (isNewGrid) {
-      setGrids((grids) => [...grids, grid]);
+      setGrids((grids) => [...grids, gridToSave]);
       setIsNewGrid(false);
 
       showSnackbarSuccess(
         browser.i18n.getMessage("ManageGrid_Message_GridCreated"),
       );
 
-      history.replaceState({}, "", location.pathname + `?id=${grid.id}`);
+      history.replaceState({}, "", location.pathname + `?id=${gridToSave.id}`);
     } else {
       setGrids((grids) => {
         grids.splice(
-          grids.findIndex((g) => g.id === grid.id),
+          grids.findIndex((g) => g.id === gridToSave.id),
           1,
-          grid,
+          gridToSave,
         );
         return grids;
       });
@@ -345,12 +365,12 @@ export default function CreateEditGridApp() {
   const getContainerMaxWidth = () => {
     let maxWidth: Breakpoint = "sm";
     if (IsGridTypeValid(grid.type)) {
-      const cols = GRID_CONFIGS[grid.type]?.MATRIX_COLS.length;
-      if (cols > 30) {
+      const { matrixCols: cols } = config;
+      if (cols.length > 30) {
         maxWidth = "xl";
-      } else if (cols > 20) {
+      } else if (cols.length > 20) {
         maxWidth = "lg";
-      } else if (cols > 15) {
+      } else if (cols.length > 15) {
         maxWidth = "md";
       }
     }
@@ -388,9 +408,13 @@ export default function CreateEditGridApp() {
                     )}
                     required
                     value={grid.type ?? ""}
-                    onChange={(event) =>
-                      setGridProp("type", event.target.value as GridType)
-                    }
+                    onChange={(event) => {
+                      const type = event.target.value as GridType;
+                      setGridProp("type", type);
+                      setConfig(
+                        GetConfigValuesWithDefaultsForGrid({ ...grid, type }),
+                      );
+                    }}
                   >
                     {GRID_TYPES.map((type) => (
                       <MenuItem key={type} value={type}>
@@ -403,8 +427,141 @@ export default function CreateEditGridApp() {
                   </Select>
                 </FormControl>
               )}
-              {IsGridTypeValid(grid.type) && (
+
+              {grid.type !== undefined && (
                 <>
+                  {/* TODO: put these fields into a new tab or accordion? */}
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    color={
+                      IsStandardGridType(grid.type)
+                        ? "textDisabled"
+                        : "textPrimary"
+                    }
+                  >
+                    {/* TODO: i18n */}
+                    Grid Configuration
+                  </Typography>
+                  <Stack
+                    direction="row"
+                    justifyContent="center"
+                    alignItems="center"
+                    spacing={SPACING}
+                  >
+                    {/* TODO: these controls are too basic; we need a way to define the number of columns and rows, but also a way to define how they are labeled (letters vs numbers starting at 0 vs numbers starting at 1 vs ...?) AND THEN we need to set/use corresponding challenge patterns */}
+                    <TextField
+                      type="number"
+                      label="Columns" // TODO: i18n
+                      size="small"
+                      required={!IsStandardGridType(grid.type)}
+                      disabled={IsStandardGridType(grid.type)}
+                      slotProps={{
+                        htmlInput: {
+                          min: 0,
+                          max: 26,
+                        },
+                      }}
+                      value={config.matrixCols.length}
+                      onChange={(event) => {
+                        const length = parseInt(event.target.value, 10);
+                        // fill with letters A-Z up to the specified length
+                        setConfigProp(
+                          "matrixCols",
+                          Array(length)
+                            .fill("")
+                            .map((_, i) => String.fromCharCode(65 + i)),
+                        );
+                      }}
+                    />
+                    <Typography
+                      variant="body1"
+                      color={
+                        IsStandardGridType(grid.type)
+                          ? "textDisabled"
+                          : "textPrimary"
+                      }
+                    >
+                      {/* TODO: i18n */}
+                      &#x2716;
+                    </Typography>
+                    <TextField
+                      type="number"
+                      label="Rows" // TODO: i18n
+                      size="small"
+                      required={!IsStandardGridType(grid.type)}
+                      disabled={IsStandardGridType(grid.type)}
+                      value={config.matrixRows.length}
+                      onChange={(event) => {
+                        const length = parseInt(event.target.value, 10);
+                        // fill with stringified numbers starting at 1 up to the specified length
+                        setConfigProp(
+                          "matrixRows",
+                          Array(length)
+                            .fill("")
+                            .map((_, i) => String(i + 1)),
+                        );
+                      }}
+                    />
+                    <Typography
+                      variant="body1"
+                      color={
+                        IsStandardGridType(grid.type)
+                          ? "textDisabled"
+                          : "textPrimary"
+                      }
+                    >
+                      {/* TODO: i18n */}
+                      &#x2716;
+                    </Typography>
+                    <TextField
+                      type="number"
+                      label={browser.i18n.getMessage(
+                        "ManageGrid_LabelText_CustomGrid_CellLength",
+                      )}
+                      size="small"
+                      required={!IsStandardGridType(grid.type)}
+                      disabled={IsStandardGridType(grid.type)}
+                      value={config.matrixCellLength}
+                      onChange={(event) =>
+                        setConfigProp(
+                          "matrixCellLength",
+                          parseInt(event.target.value, 10),
+                        )
+                      }
+                    />
+                  </Stack>
+                  <TextField
+                    label="Query Selector" // TODO: i18n
+                    size="small"
+                    required={!IsStandardGridType(grid.type)}
+                    disabled={IsStandardGridType(grid.type)}
+                    value={config.responseInputFieldQuerySelector}
+                    onChange={(event) =>
+                      setConfigProp(
+                        "responseInputFieldQuerySelector",
+                        event.target.value,
+                      )
+                    }
+                  />
+                  <Divider />
+                </>
+              )}
+
+              {(IsStandardGridType(grid.type) ||
+                IsCustomGridConfigValidForMatrix(config)) && (
+                <>
+                  <TextField
+                    label={browser.i18n.getMessage(
+                      "ManageGrid_LabelText_GridTitle",
+                    )}
+                    size="small"
+                    required
+                    value={grid.title ?? ""}
+                    onChange={(event) =>
+                      setGridProp("title", event.target.value)
+                    }
+                  />
                   <label htmlFor="csv-file-input">
                     <HiddenFileInput
                       accept={FILE_TYPES.join()}
@@ -423,26 +580,18 @@ export default function CreateEditGridApp() {
                       )}
                     </Button>
                   </label>
-                  <TextField
-                    label={browser.i18n.getMessage(
-                      "ManageGrid_LabelText_GridTitle",
-                    )}
-                    size="small"
-                    required
-                    value={grid.title ?? ""}
-                    onChange={(event) =>
-                      setGridProp("title", event.target.value)
-                    }
-                  />
                   <Divider />
                   <GridMatrixTable
-                    type={grid.type}
+                    cols={config.matrixCols}
+                    rows={config.matrixRows}
+                    cellLength={config.matrixCellLength}
                     matrix={grid.matrix}
                     setMatrixCell={setMatrixCell}
                   />
                   <Divider />
                 </>
               )}
+
               <Stack
                 direction="row"
                 justifyContent="center"
@@ -466,7 +615,7 @@ export default function CreateEditGridApp() {
                   variant="contained"
                   fullWidth
                   startIcon={<CheckCircleOutlineIcon />}
-                  disabled={!IsGridValid(grid)}
+                  disabled={!IsGridValid(grid, config)}
                   onClick={handleGridSave}
                 >
                   {browser.i18n.getMessage(

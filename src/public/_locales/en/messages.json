@@ -15,6 +15,9 @@
     "message": "Challenge Grid Autofill",
     "description": "The title of the browser action button"
   },
+  "GridType_Title_Custom": {
+    "message": "Custom Grid"
+  },
   "GridType_Title_Deepnet": {
     "message": "Deepnet GridID"
   },
@@ -50,6 +53,9 @@
   },
   "ManageGrid_Title_EditGrid": {
     "message": "Edit Grid"
+  },
+  "ManageGrid_LabelText_CustomGrid_CellLength": {
+    "message": "Cell Length"
   },
   "ManageGrid_Title_EditGridWithPlaceholders": {
     "message": "Edit $TYPE$ Grid \"$ID$\"",
