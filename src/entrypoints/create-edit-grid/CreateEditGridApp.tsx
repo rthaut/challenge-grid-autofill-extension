@@ -14,8 +14,10 @@ import {
   type CustomGrid,
   type Grid,
   type GridConfig,
+  type GridDimensionConfig,
   type GridType,
   type StandardGrid,
+  GRID_DIMENSION_CONFIGS,
   GRID_TYPES,
   GetConfigValuesWithDefaultsForGrid,
   GetEmptyGridMatrix,
@@ -41,12 +43,9 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import Divider from "@mui/material/Divider";
-import FormControl from "@mui/material/FormControl";
 import IconButton from "@mui/material/IconButton";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
-import Select from "@mui/material/Select";
 import Snackbar, { type SnackbarCloseReason } from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import { type Breakpoint, styled, ThemeProvider } from "@mui/material/styles";
@@ -188,6 +187,57 @@ export default function CreateEditGridApp() {
 
   const [config, { set: setConfigProp, setAll: setConfig }] =
     useMap<GridConfig>(GetConfigValuesWithDefaultsForGrid(grid));
+
+  const [columnCount, setColumnCount] = useState(0);
+  const [rowCount, setRowCount] = useState(0);
+
+  const [columnKeys, setColumnKeys] = useState<GridDimensionConfig>("A-Z");
+  const [rowKeys, setRowKeys] = useState<GridDimensionConfig>("1-9");
+
+  const onGridDimensionPropChange =
+    (dimension: "column" | "row") =>
+    ({ length, keys }: { length?: number; keys?: GridDimensionConfig }) => {
+      switch (dimension) {
+        case "column":
+          if (length !== undefined) {
+            setColumnCount(length);
+          }
+          if (keys !== undefined) {
+            setColumnKeys(keys);
+          }
+          setConfigProp(
+            "matrixCols",
+            GRID_DIMENSION_CONFIGS[keys ?? columnKeys]?.apply(
+              length ?? columnCount,
+            ),
+          );
+          setConfigProp("challengePatterns", [
+            new RegExp(
+              `(${GRID_DIMENSION_CONFIGS[keys ?? columnKeys]?.pattern.source}${GRID_DIMENSION_CONFIGS[rowKeys]?.pattern.source})`,
+              "g",
+            ),
+          ]);
+          break;
+        case "row":
+          if (length !== undefined) {
+            setRowCount(length);
+          }
+          if (keys !== undefined) {
+            setRowKeys(keys);
+          }
+          setConfigProp(
+            "matrixRows",
+            GRID_DIMENSION_CONFIGS[keys ?? rowKeys]?.apply(length ?? rowCount),
+          );
+          setConfigProp("challengePatterns", [
+            new RegExp(
+              `(${GRID_DIMENSION_CONFIGS[columnKeys]?.pattern.source}${GRID_DIMENSION_CONFIGS[keys ?? rowKeys]?.pattern.source})`,
+              "g",
+            ),
+          ]);
+          break;
+      }
+    };
 
   React.useEffect(() => {
     if (id !== undefined && id !== null && id !== "") {
@@ -398,34 +448,46 @@ export default function CreateEditGridApp() {
               sx={{ pb: SPACING }}
             >
               {isNewGrid && (
-                <FormControl fullWidth size="small">
-                  <InputLabel>
-                    {browser.i18n.getMessage("ManageGrid_LabelText_GridType")}
-                  </InputLabel>
-                  <Select
-                    label={browser.i18n.getMessage(
-                      "ManageGrid_LabelText_GridType",
-                    )}
-                    required
-                    value={grid.type ?? ""}
-                    onChange={(event) => {
-                      const type = event.target.value as GridType;
-                      setGridProp("type", type);
-                      setConfig(
-                        GetConfigValuesWithDefaultsForGrid({ ...grid, type }),
-                      );
-                    }}
-                  >
-                    {GRID_TYPES.map((type) => (
-                      <MenuItem key={type} value={type}>
-                        {browser.i18n.getMessage(
-                          // @ts-expect-error - casing of `type` property is lowercase
-                          `GridType_Title_${type}`,
-                        )}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                <TextField
+                  select
+                  label={browser.i18n.getMessage(
+                    "ManageGrid_LabelText_GridType",
+                  )}
+                  size="small"
+                  fullWidth
+                  required
+                  value={grid.type ?? ""}
+                  onChange={(event) => {
+                    const type = event.target.value as GridType;
+                    setGridProp("type", type);
+                    const config = GetConfigValuesWithDefaultsForGrid({
+                      ...grid,
+                      type,
+                    });
+                    setConfig(config);
+                    if (IsStandardGridType(type)) {
+                      setColumnCount(config.matrixCols.length);
+                      setRowCount(config.matrixRows.length);
+                      // TODO: currently there is no way to "determine" the keys used for a standard grid type (since the columns and rows are hardcoded in the config file); ideally we pivot to "storing" / "configuring" the GRID_DIMENSION_CONFIGS for columns and rows for both standard and custom grids, but until then, we just set them to the default values
+                      setColumnKeys("A-Z");
+                      setRowKeys("1-9");
+                    } else {
+                      setColumnCount(0);
+                      setRowCount(0);
+                      setColumnKeys("A-Z");
+                      setRowKeys("1-9");
+                    }
+                  }}
+                >
+                  {GRID_TYPES.map((type) => (
+                    <MenuItem key={type} value={type}>
+                      {browser.i18n.getMessage(
+                        // @ts-expect-error - casing of `type` property is lowercase
+                        `GridType_Title_${type}`,
+                      )}
+                    </MenuItem>
+                  ))}
+                </TextField>
               )}
 
               {grid.type !== undefined && (
@@ -445,7 +507,7 @@ export default function CreateEditGridApp() {
                   </Typography>
                   <Stack
                     direction="row"
-                    justifyContent="center"
+                    justifyContent="space-evenly"
                     alignItems="center"
                     spacing={SPACING}
                   >
@@ -454,24 +516,21 @@ export default function CreateEditGridApp() {
                       type="number"
                       label="Columns" // TODO: i18n
                       size="small"
+                      fullWidth
                       required={!IsStandardGridType(grid.type)}
                       disabled={IsStandardGridType(grid.type)}
                       slotProps={{
                         htmlInput: {
                           min: 0,
-                          max: 26,
+                          max: GRID_DIMENSION_CONFIGS[columnKeys].max,
                         },
                       }}
-                      value={config.matrixCols.length}
+                      value={columnCount}
                       onChange={(event) => {
                         const length = parseInt(event.target.value, 10);
-                        // fill with letters A-Z up to the specified length
-                        setConfigProp(
-                          "matrixCols",
-                          Array(length)
-                            .fill("")
-                            .map((_, i) => String.fromCharCode(65 + i)),
-                        );
+                        onGridDimensionPropChange("column")({
+                          length,
+                        });
                       }}
                     />
                     <Typography
@@ -489,18 +548,21 @@ export default function CreateEditGridApp() {
                       type="number"
                       label="Rows" // TODO: i18n
                       size="small"
+                      fullWidth
                       required={!IsStandardGridType(grid.type)}
                       disabled={IsStandardGridType(grid.type)}
-                      value={config.matrixRows.length}
+                      slotProps={{
+                        htmlInput: {
+                          min: 0,
+                          max: GRID_DIMENSION_CONFIGS[rowKeys].max,
+                        },
+                      }}
+                      value={rowCount}
                       onChange={(event) => {
                         const length = parseInt(event.target.value, 10);
-                        // fill with stringified numbers starting at 1 up to the specified length
-                        setConfigProp(
-                          "matrixRows",
-                          Array(length)
-                            .fill("")
-                            .map((_, i) => String(i + 1)),
-                        );
+                        onGridDimensionPropChange("row")({
+                          length,
+                        });
                       }}
                     />
                     <Typography
@@ -520,8 +582,15 @@ export default function CreateEditGridApp() {
                         "ManageGrid_LabelText_CustomGrid_CellLength",
                       )}
                       size="small"
+                      fullWidth
                       required={!IsStandardGridType(grid.type)}
                       disabled={IsStandardGridType(grid.type)}
+                      slotProps={{
+                        htmlInput: {
+                          min: 0,
+                          max: 5,
+                        },
+                      }}
                       value={config.matrixCellLength}
                       onChange={(event) =>
                         setConfigProp(
@@ -530,6 +599,59 @@ export default function CreateEditGridApp() {
                         )
                       }
                     />
+                  </Stack>
+                  <Stack
+                    direction="row"
+                    justifyContent="space-evenly"
+                    alignItems="center"
+                    spacing={SPACING}
+                  >
+                    <TextField
+                      select
+                      label="Column Keys" // TODO: i18n
+                      helperText="Set the keys/labels for each column" // TODO: i18n
+                      size="small"
+                      fullWidth
+                      required={!IsStandardGridType(grid.type)}
+                      disabled={IsStandardGridType(grid.type)}
+                      value={columnKeys}
+                      onChange={(event) => {
+                        const fillOption = event.target
+                          .value as GridDimensionConfig;
+                        onGridDimensionPropChange("column")({
+                          keys: fillOption,
+                        });
+                      }}
+                    >
+                      {Object.entries(GRID_DIMENSION_CONFIGS).map(([key]) => (
+                        <MenuItem key={key} value={key}>
+                          {key}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                    <TextField
+                      select
+                      label="Row Keys" // TODO: i18n
+                      helperText="Set the keys/labels for each row" // TODO: i18n
+                      size="small"
+                      fullWidth
+                      required={!IsStandardGridType(grid.type)}
+                      disabled={IsStandardGridType(grid.type)}
+                      value={rowKeys}
+                      onChange={(event) => {
+                        const fillOption = event.target
+                          .value as GridDimensionConfig;
+                        onGridDimensionPropChange("row")({
+                          keys: fillOption,
+                        });
+                      }}
+                    >
+                      {Object.entries(GRID_DIMENSION_CONFIGS).map(([key]) => (
+                        <MenuItem key={key} value={key}>
+                          {key}
+                        </MenuItem>
+                      ))}
+                    </TextField>
                   </Stack>
                   <TextField
                     label="Query Selector" // TODO: i18n
@@ -544,6 +666,12 @@ export default function CreateEditGridApp() {
                       )
                     }
                   />
+                  <mark>
+                    {/* TODO: either remove this or clean it up */}
+                    <pre>
+                      <code>{config.challengePatterns.join("\r\n")}</code>
+                    </pre>
+                  </mark>
                   <Divider />
                 </>
               )}

@@ -33,8 +33,8 @@ export interface GridConfig {
 export const DEFAULT_GRID_CONFIG: GridConfig = {
   matrixCols: [],
   matrixRows: [],
-  matrixCellLength: 1,
-  challengePatterns: [/([a-zA-Z]\d{1,2})/g],
+  matrixCellLength: 0,
+  challengePatterns: [],
   responseInputFieldQuerySelector: `input[type="password"]`,
 } as const;
 
@@ -45,6 +45,35 @@ export interface CustomGrid extends Omit<StandardGrid, "type">, GridConfig {
 export type Grid = StandardGrid | CustomGrid;
 
 export const GRIDS_STORAGE_KEY = "grids";
+
+export const GRID_DIMENSION_CONFIGS = {
+  "A-Z": {
+    max: 26,
+    pattern: /[a-zA-Z]{1}/,
+    apply: (length: number) =>
+      Array(length)
+        .fill("")
+        .map((_, i) => String.fromCharCode(65 + i)),
+  },
+  "0-9": {
+    max: 10,
+    pattern: /\d{1}/,
+    apply: (length: number) =>
+      Array(length)
+        .fill("")
+        .map((_, i) => String(i)),
+  },
+  "1-9": {
+    max: 10,
+    pattern: /\d{1,2}/,
+    apply: (length: number) =>
+      Array(length)
+        .fill("")
+        .map((_, i) => String(i + 1)),
+  },
+};
+
+export type GridDimensionConfig = keyof typeof GRID_DIMENSION_CONFIGS;
 
 /**
  * Returns all grids from browser sync storage
