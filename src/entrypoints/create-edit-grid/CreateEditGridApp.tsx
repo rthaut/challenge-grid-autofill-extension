@@ -292,7 +292,7 @@ export default function CreateEditGridApp() {
         try {
           const data = event?.target?.result?.toString();
           const matrix = data
-            ?.replace(/\r?\n$/, "")
+            ?.replace(/(?:\r?\n)+$/, "") // remove empty line(s) at end of file
             .split(/\r?\n/)
             .slice(config.matrixRows.length * -1) // take last # rows (dirty way to skip optional column headers)
             .map(
