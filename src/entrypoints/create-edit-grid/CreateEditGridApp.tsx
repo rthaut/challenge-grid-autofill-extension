@@ -31,6 +31,8 @@ import {
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 import Alert, { type AlertProps } from "@mui/material/Alert";
@@ -48,6 +50,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
 import Snackbar, { type SnackbarCloseReason } from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepButton from "@mui/material/StepButton";
+import StepLabel from "@mui/material/StepLabel";
+import StepContent from "@mui/material/StepContent";
 import { type Breakpoint, styled, ThemeProvider } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -194,6 +201,7 @@ export default function CreateEditGridApp() {
   const [columnKeys, setColumnKeys] = useState<GridDimensionConfig>("A-Z");
   const [rowKeys, setRowKeys] = useState<GridDimensionConfig>("1-9");
 
+  // TODO: when grid dimensions change, we need to update `grid.matrix` to match the new dimensions (e.g. if we change the number of columns, we need to add/remove columns in the matrix)
   const onGridDimensionPropChange =
     (dimension: "column" | "row") =>
     ({ length, keys }: { length?: number; keys?: GridDimensionConfig }) => {
@@ -244,6 +252,7 @@ export default function CreateEditGridApp() {
       const gridFromStorage = grids.find((g) => g.id === id);
       if (gridFromStorage !== undefined) {
         setIsNewGrid(false);
+        setConfig(GetConfigValuesWithDefaultsForGrid(gridFromStorage));
         if (IsGridValid(gridFromStorage)) {
           setPageTitle(
             browser.i18n.getMessage(
@@ -275,7 +284,8 @@ export default function CreateEditGridApp() {
   }, [isNewGrid]);
 
   const setMatrixCell = (row: number, col: number, value: string) => {
-    let { matrix, type } = grid;
+    console.log("Setting matrix cell", grid, row, col, value);
+    let { matrix } = grid;
     if (matrix === undefined) {
       matrix = GetEmptyGridMatrix(config.matrixCols, config.matrixRows);
     }
@@ -428,332 +438,394 @@ export default function CreateEditGridApp() {
     return maxWidth;
   };
 
+  const IsGridConfigStepFailed =
+    grid.type !== undefined &&
+    !IsStandardGridType(grid.type) &&
+    !IsCustomGridConfigValidForMatrix(config);
+
+  const CanModifyGrid =
+    IsStandardGridType(grid.type) || IsCustomGridConfigValidForMatrix(config);
+
+  const [activeStep, setActiveStep] = React.useState(0);
+  const StepButtons = ({}) => (
+    <>
+      <Box sx={{ display: "flex", flexDirection: "row", pt: SPACING, pb: 0 }}>
+        <Button
+          disabled={activeStep === 0}
+          onClick={() => setActiveStep((step) => step - 1)}
+          sx={{ ml: 1 }}
+        >
+          {theme.direction === "rtl" ? (
+            <KeyboardArrowRight />
+          ) : (
+            <KeyboardArrowLeft />
+          )}
+          Back
+        </Button>
+        <Box sx={{ flex: "1 1 auto" }} />
+        <Button
+          disabled={activeStep === 1}
+          onClick={() => setActiveStep((step) => step + 1)}
+          sx={{ mr: 1 }}
+        >
+          Next
+          {theme.direction === "rtl" ? (
+            <KeyboardArrowLeft />
+          ) : (
+            <KeyboardArrowRight />
+          )}
+        </Button>
+      </Box>
+    </>
+  );
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Paper elevation={0}>
         <PageHeader title={pageTitle} />
         <Container maxWidth={getContainerMaxWidth()}>
+          <StepButtons />
           <Box
             component="form"
             noValidate
             autoComplete="off"
             sx={{ m: SPACING }}
           >
-            <Stack
-              direction="column"
-              justifyContent="flex-start"
-              alignItems="stretch"
-              spacing={SPACING}
-              sx={{ pb: SPACING }}
-            >
-              {isNewGrid && (
-                <TextField
-                  select
-                  label={browser.i18n.getMessage(
-                    "ManageGrid_LabelText_GridType",
-                  )}
-                  size="small"
-                  fullWidth
-                  required
-                  value={grid.type ?? ""}
-                  onChange={(event) => {
-                    const type = event.target.value as GridType;
-                    setGridProp("type", type);
-                    const config = GetConfigValuesWithDefaultsForGrid({
-                      ...grid,
-                      type,
-                    });
-                    setConfig(config);
-                    if (IsStandardGridType(type)) {
-                      setColumnCount(config.matrixCols.length);
-                      setRowCount(config.matrixRows.length);
-                      // TODO: currently there is no way to "determine" the keys used for a standard grid type (since the columns and rows are hardcoded in the config file); ideally we pivot to "storing" / "configuring" the GRID_DIMENSION_CONFIGS for columns and rows for both standard and custom grids, but until then, we just set them to the default values
-                      setColumnKeys("A-Z");
-                      setRowKeys("1-9");
-                    } else {
-                      setColumnCount(0);
-                      setRowCount(0);
-                      setColumnKeys("A-Z");
-                      setRowKeys("1-9");
-                    }
-                  }}
-                >
-                  {GRID_TYPES.map((type) => (
-                    <MenuItem key={type} value={type}>
+            <Stepper activeStep={activeStep} orientation="vertical">
+              <Step>
+                <StepLabel
+                  error={IsGridConfigStepFailed}
+                  optional={
+                    <Typography
+                      variant="caption"
+                      color={IsGridConfigStepFailed ? "error" : "textSecondary"}
+                    >
                       {browser.i18n.getMessage(
                         // @ts-expect-error - casing of `type` property is lowercase
-                        `GridType_Title_${type}`,
+                        grid.type == undefined
+                          ? "ManageGrid_StepLabel_Caption_GridTypeNotSelected"
+                          : IsGridConfigStepFailed
+                            ? "ManageGrid_StepLabel_Error_CustomGridConfig"
+                            : `GridType_Title_${grid.type}`,
                       )}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              )}
-
-              {grid.type !== undefined && (
-                <>
-                  {/* TODO: put these fields into a new tab or accordion? */}
-                  <Typography
-                    variant="h6"
-                    gutterBottom
-                    color={
-                      IsStandardGridType(grid.type)
-                        ? "textDisabled"
-                        : "textPrimary"
-                    }
-                  >
-                    {/* TODO: i18n */}
-                    Grid Configuration
-                  </Typography>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-evenly"
-                    alignItems="center"
-                    spacing={SPACING}
-                  >
-                    {/* TODO: these controls are too basic; we need a way to define the number of columns and rows, but also a way to define how they are labeled (letters vs numbers starting at 0 vs numbers starting at 1 vs ...?) AND THEN we need to set/use corresponding challenge patterns */}
-                    <TextField
-                      type="number"
-                      label="Columns" // TODO: i18n
-                      size="small"
-                      fullWidth
-                      required={!IsStandardGridType(grid.type)}
-                      disabled={IsStandardGridType(grid.type)}
-                      slotProps={{
-                        htmlInput: {
-                          min: 0,
-                          max: GRID_DIMENSION_CONFIGS[columnKeys].max,
-                        },
-                      }}
-                      value={columnCount}
-                      onChange={(event) => {
-                        const length = parseInt(event.target.value, 10);
-                        onGridDimensionPropChange("column")({
-                          length,
-                        });
-                      }}
-                    />
-                    <Typography
-                      variant="body1"
-                      color={
-                        IsStandardGridType(grid.type)
-                          ? "textDisabled"
-                          : "textPrimary"
-                      }
-                    >
-                      {/* TODO: i18n */}
-                      &#x2716;
                     </Typography>
-                    <TextField
-                      type="number"
-                      label="Rows" // TODO: i18n
-                      size="small"
-                      fullWidth
-                      required={!IsStandardGridType(grid.type)}
-                      disabled={IsStandardGridType(grid.type)}
-                      slotProps={{
-                        htmlInput: {
-                          min: 0,
-                          max: GRID_DIMENSION_CONFIGS[rowKeys].max,
-                        },
-                      }}
-                      value={rowCount}
-                      onChange={(event) => {
-                        const length = parseInt(event.target.value, 10);
-                        onGridDimensionPropChange("row")({
-                          length,
-                        });
-                      }}
-                    />
-                    <Typography
-                      variant="body1"
-                      color={
-                        IsStandardGridType(grid.type)
-                          ? "textDisabled"
-                          : "textPrimary"
-                      }
-                    >
-                      {/* TODO: i18n */}
-                      &#x2716;
-                    </Typography>
-                    <TextField
-                      type="number"
-                      label={browser.i18n.getMessage(
-                        "ManageGrid_LabelText_CustomGrid_CellLength",
-                      )}
-                      size="small"
-                      fullWidth
-                      required={!IsStandardGridType(grid.type)}
-                      disabled={IsStandardGridType(grid.type)}
-                      slotProps={{
-                        htmlInput: {
-                          min: 0,
-                          max: 5,
-                        },
-                      }}
-                      value={config.matrixCellLength}
-                      onChange={(event) =>
-                        setConfigProp(
-                          "matrixCellLength",
-                          parseInt(event.target.value, 10),
-                        )
-                      }
-                    />
-                  </Stack>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-evenly"
-                    alignItems="center"
-                    spacing={SPACING}
-                  >
-                    <TextField
-                      select
-                      label="Column Keys" // TODO: i18n
-                      helperText="Set the keys/labels for each column" // TODO: i18n
-                      size="small"
-                      fullWidth
-                      required={!IsStandardGridType(grid.type)}
-                      disabled={IsStandardGridType(grid.type)}
-                      value={columnKeys}
-                      onChange={(event) => {
-                        const fillOption = event.target
-                          .value as GridDimensionConfig;
-                        onGridDimensionPropChange("column")({
-                          keys: fillOption,
-                        });
-                      }}
-                    >
-                      {Object.entries(GRID_DIMENSION_CONFIGS).map(([key]) => (
-                        <MenuItem key={key} value={key}>
-                          {key}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                    <TextField
-                      select
-                      label="Row Keys" // TODO: i18n
-                      helperText="Set the keys/labels for each row" // TODO: i18n
-                      size="small"
-                      fullWidth
-                      required={!IsStandardGridType(grid.type)}
-                      disabled={IsStandardGridType(grid.type)}
-                      value={rowKeys}
-                      onChange={(event) => {
-                        const fillOption = event.target
-                          .value as GridDimensionConfig;
-                        onGridDimensionPropChange("row")({
-                          keys: fillOption,
-                        });
-                      }}
-                    >
-                      {Object.entries(GRID_DIMENSION_CONFIGS).map(([key]) => (
-                        <MenuItem key={key} value={key}>
-                          {key}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </Stack>
-                  <TextField
-                    label="Query Selector" // TODO: i18n
-                    size="small"
-                    required={!IsStandardGridType(grid.type)}
-                    disabled={IsStandardGridType(grid.type)}
-                    value={config.responseInputFieldQuerySelector}
-                    onChange={(event) =>
-                      setConfigProp(
-                        "responseInputFieldQuerySelector",
-                        event.target.value,
-                      )
-                    }
-                  />
-                  <mark>
-                    {/* TODO: either remove this or clean it up */}
-                    <pre>
-                      <code>{config.challengePatterns.join("\r\n")}</code>
-                    </pre>
-                  </mark>
-                  <Divider />
-                </>
-              )}
-
-              {(IsStandardGridType(grid.type) ||
-                IsCustomGridConfigValidForMatrix(config)) && (
-                <>
-                  <TextField
-                    label={browser.i18n.getMessage(
-                      "ManageGrid_LabelText_GridTitle",
-                    )}
-                    size="small"
-                    required
-                    value={grid.title ?? ""}
-                    onChange={(event) =>
-                      setGridProp("title", event.target.value)
-                    }
-                  />
-                  <label htmlFor="csv-file-input">
-                    <HiddenFileInput
-                      accept={FILE_TYPES.join()}
-                      id="csv-file-input"
-                      type="file"
-                      onChange={handleFileChange}
-                    />
-                    <Button
-                      variant="outlined"
-                      component="span"
-                      fullWidth
-                      startIcon={<UploadFileIcon />}
-                    >
-                      {browser.i18n.getMessage(
-                        "ManageGrid_ButtonText_ImportCSV",
-                      )}
-                    </Button>
-                  </label>
-                  <Divider />
-                  <GridMatrixTable
-                    cols={config.matrixCols}
-                    rows={config.matrixRows}
-                    cellLength={config.matrixCellLength}
-                    matrix={grid.matrix}
-                    setMatrixCell={setMatrixCell}
-                  />
-                  <Divider />
-                </>
-              )}
-
-              <Stack
-                direction="row"
-                justifyContent="center"
-                alignItems="center"
-                spacing={SPACING}
-              >
-                {!isNewGrid && (
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    fullWidth
-                    startIcon={<DeleteIcon />}
-                    onClick={openConfirmDeleteDialog}
-                  >
-                    {browser.i18n.getMessage(
-                      "ManageGrid_ButtonText_DeleteGrid",
-                    )}
-                  </Button>
-                )}
-                <Button
-                  variant="contained"
-                  fullWidth
-                  startIcon={<CheckCircleOutlineIcon />}
-                  disabled={!IsGridValid(grid, config)}
-                  onClick={handleGridSave}
+                  }
                 >
                   {browser.i18n.getMessage(
-                    isNewGrid
-                      ? "ManageGrid_ButtonText_CreateGrid"
-                      : "ManageGrid_ButtonText_UpdateGrid",
+                    "ManageGrid_StepLabel_GridConfiguration",
                   )}
-                </Button>
-              </Stack>
-            </Stack>
+                </StepLabel>
+                <StepContent>
+                  <Stack
+                    direction="column"
+                    justifyContent="flex-start"
+                    alignItems="stretch"
+                    spacing={SPACING}
+                    sx={{ py: SPACING }}
+                  >
+                    {isNewGrid && (
+                      <TextField
+                        select
+                        label={browser.i18n.getMessage(
+                          "ManageGrid_LabelText_GridType",
+                        )}
+                        size="small"
+                        fullWidth
+                        required
+                        value={grid.type ?? ""}
+                        onChange={(event) => {
+                          const type = event.target.value as GridType;
+                          setGridProp("type", type);
+                          const config = GetConfigValuesWithDefaultsForGrid({
+                            ...grid,
+                            type,
+                          });
+                          setConfig(config);
+                          if (IsStandardGridType(type)) {
+                            setColumnCount(config.matrixCols.length);
+                            setRowCount(config.matrixRows.length);
+                            // TODO: currently there is no way to "determine" the keys used for a standard grid type (since the columns and rows are hardcoded in the config file); ideally we pivot to "storing" / "configuring" the GRID_DIMENSION_CONFIGS for columns and rows for both standard and custom grids, but until then, we just set them to the default values
+                            setColumnKeys("A-Z");
+                            setRowKeys("1-9");
+                          } else {
+                            setColumnCount(0);
+                            setRowCount(0);
+                            setColumnKeys("A-Z");
+                            setRowKeys("1-9");
+                          }
+                        }}
+                      >
+                        {GRID_TYPES.map((type) => (
+                          <MenuItem key={type} value={type}>
+                            {browser.i18n.getMessage(
+                              // @ts-expect-error - casing of `type` property is lowercase
+                              `GridType_Title_${type}`,
+                            )}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    )}
+                    {grid.type !== undefined && (
+                      <>
+                        <Stack
+                          direction="row"
+                          justifyContent="space-evenly"
+                          alignItems="center"
+                          spacing={SPACING}
+                        >
+                          <TextField
+                            type="number"
+                            label="Columns" // TODO: i18n
+                            size="small"
+                            fullWidth
+                            required={!IsStandardGridType(grid.type)}
+                            disabled={IsStandardGridType(grid.type)}
+                            slotProps={{
+                              htmlInput: {
+                                min: 0,
+                                max: GRID_DIMENSION_CONFIGS[columnKeys].max,
+                              },
+                            }}
+                            value={columnCount}
+                            onChange={(event) => {
+                              const length = parseInt(event.target.value, 10);
+                              onGridDimensionPropChange("column")({
+                                length,
+                              });
+                            }}
+                          />
+                          <Typography
+                            variant="body1"
+                            color={
+                              IsStandardGridType(grid.type)
+                                ? "textDisabled"
+                                : "textPrimary"
+                            }
+                          >
+                            &#x2716;
+                          </Typography>
+                          <TextField
+                            type="number"
+                            label="Rows" // TODO: i18n
+                            size="small"
+                            fullWidth
+                            required={!IsStandardGridType(grid.type)}
+                            disabled={IsStandardGridType(grid.type)}
+                            slotProps={{
+                              htmlInput: {
+                                min: 0,
+                                max: GRID_DIMENSION_CONFIGS[rowKeys].max,
+                              },
+                            }}
+                            value={rowCount}
+                            onChange={(event) => {
+                              const length = parseInt(event.target.value, 10);
+                              onGridDimensionPropChange("row")({
+                                length,
+                              });
+                            }}
+                          />
+                          <Typography
+                            variant="body1"
+                            color={
+                              IsStandardGridType(grid.type)
+                                ? "textDisabled"
+                                : "textPrimary"
+                            }
+                          >
+                            &#x2716;
+                          </Typography>
+                          <TextField
+                            type="number"
+                            label={browser.i18n.getMessage(
+                              "ManageGrid_LabelText_CustomGrid_CellLength",
+                            )}
+                            size="small"
+                            fullWidth
+                            required={!IsStandardGridType(grid.type)}
+                            disabled={IsStandardGridType(grid.type)}
+                            slotProps={{
+                              htmlInput: {
+                                min: 0,
+                                max: 5,
+                              },
+                            }}
+                            value={config.matrixCellLength}
+                            onChange={(event) =>
+                              setConfigProp(
+                                "matrixCellLength",
+                                parseInt(event.target.value, 10),
+                              )
+                            }
+                          />
+                        </Stack>
+                        <Stack
+                          direction="row"
+                          justifyContent="space-evenly"
+                          alignItems="center"
+                          spacing={SPACING}
+                        >
+                          <TextField
+                            select
+                            label="Column Keys" // TODO: i18n
+                            helperText="Set the keys/labels for each column" // TODO: i18n
+                            size="small"
+                            fullWidth
+                            required={!IsStandardGridType(grid.type)}
+                            disabled={IsStandardGridType(grid.type)}
+                            value={columnKeys}
+                            onChange={(event) => {
+                              const fillOption = event.target
+                                .value as GridDimensionConfig;
+                              onGridDimensionPropChange("column")({
+                                keys: fillOption,
+                              });
+                            }}
+                          >
+                            {Object.entries(GRID_DIMENSION_CONFIGS).map(
+                              ([key]) => (
+                                <MenuItem key={key} value={key}>
+                                  {key}
+                                </MenuItem>
+                              ),
+                            )}
+                          </TextField>
+                          <TextField
+                            select
+                            label="Row Keys" // TODO: i18n
+                            helperText="Set the keys/labels for each row" // TODO: i18n
+                            size="small"
+                            fullWidth
+                            required={!IsStandardGridType(grid.type)}
+                            disabled={IsStandardGridType(grid.type)}
+                            value={rowKeys}
+                            onChange={(event) => {
+                              const fillOption = event.target
+                                .value as GridDimensionConfig;
+                              onGridDimensionPropChange("row")({
+                                keys: fillOption,
+                              });
+                            }}
+                          >
+                            {Object.entries(GRID_DIMENSION_CONFIGS).map(
+                              ([key]) => (
+                                <MenuItem key={key} value={key}>
+                                  {key}
+                                </MenuItem>
+                              ),
+                            )}
+                          </TextField>
+                        </Stack>
+                        <TextField
+                          label="Query Selector" // TODO: i18n
+                          size="small"
+                          required={!IsStandardGridType(grid.type)}
+                          disabled={IsStandardGridType(grid.type)}
+                          value={config.responseInputFieldQuerySelector}
+                          onChange={(event) =>
+                            setConfigProp(
+                              "responseInputFieldQuerySelector",
+                              event.target.value,
+                            )
+                          }
+                        />
+                      </>
+                    )}
+                  </Stack>
+                </StepContent>
+              </Step>
+              <Step>
+                <StepLabel>
+                  {browser.i18n.getMessage("ManageGrid_StepLabel_GridValues")}
+                </StepLabel>
+                <StepContent>
+                  <Stack
+                    direction="column"
+                    justifyContent="flex-start"
+                    alignItems="stretch"
+                    spacing={SPACING}
+                    sx={{ py: SPACING }}
+                  >
+                    {CanModifyGrid && (
+                      <>
+                        <TextField
+                          label={browser.i18n.getMessage(
+                            "ManageGrid_LabelText_GridTitle",
+                          )}
+                          size="small"
+                          required
+                          value={grid.title ?? ""}
+                          onChange={(event) =>
+                            setGridProp("title", event.target.value)
+                          }
+                        />
+                        <label htmlFor="csv-file-input">
+                          <HiddenFileInput
+                            accept={FILE_TYPES.join()}
+                            id="csv-file-input"
+                            type="file"
+                            onChange={handleFileChange}
+                          />
+                          <Button
+                            variant="outlined"
+                            component="span"
+                            fullWidth
+                            startIcon={<UploadFileIcon />}
+                          >
+                            {browser.i18n.getMessage(
+                              "ManageGrid_ButtonText_ImportCSV",
+                            )}
+                          </Button>
+                        </label>
+                        <Divider />
+                        <GridMatrixTable
+                          cols={config.matrixCols}
+                          rows={config.matrixRows}
+                          cellLength={config.matrixCellLength}
+                          matrix={grid.matrix}
+                          setMatrixCell={setMatrixCell}
+                        />
+                      </>
+                    )}
+                  </Stack>
+                  <Divider sx={{ mb: SPACING }} />
+                  <Stack
+                    direction="row"
+                    justifyContent="center"
+                    alignItems="center"
+                    spacing={SPACING}
+                  >
+                    {!isNewGrid && (
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        fullWidth
+                        startIcon={<DeleteIcon />}
+                        onClick={openConfirmDeleteDialog}
+                      >
+                        {browser.i18n.getMessage(
+                          "ManageGrid_ButtonText_DeleteGrid",
+                        )}
+                      </Button>
+                    )}
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      startIcon={<CheckCircleOutlineIcon />}
+                      disabled={!IsGridValid(grid, config)}
+                      onClick={handleGridSave}
+                    >
+                      {browser.i18n.getMessage(
+                        isNewGrid
+                          ? "ManageGrid_ButtonText_CreateGrid"
+                          : "ManageGrid_ButtonText_UpdateGrid",
+                      )}
+                    </Button>
+                  </Stack>
+                </StepContent>
+              </Step>
+            </Stepper>
           </Box>
         </Container>
       </Paper>

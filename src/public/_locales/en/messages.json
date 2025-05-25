@@ -30,6 +30,18 @@
   "Popup_Options_Text": {
     "message": "Options"
   },
+  "ManageGrid_StepLabel_GridConfiguration": {
+    "message": "Grid Config"
+  },
+  "ManageGrid_StepLabel_GridValues": {
+    "message": "Grid Values"
+  },
+  "ManageGrid_StepLabel_Caption_GridTypeNotSelected": {
+    "message": "Please select a grid type"
+  },
+  "ManageGrid_StepLabel_Error_CustomGridConfig": {
+    "message": "Custom grid configuration is not valid"
+  },
   "ManageGrid_ButtonText_ImportCSV": {
     "message": "Import from CSV File"
   },
