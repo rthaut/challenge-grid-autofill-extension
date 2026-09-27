@@ -35,6 +35,26 @@ export default defineConfig({
             } as UserManifest["author"],
           };
 
+    const firefox_settings =
+      browser === "firefox"
+        ? {
+            // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/browser_specific_settings
+            browser_specific_settings: {
+              gecko: {
+                id: "challenge-grid-autofill@ryan.thaut.me",
+                strict_min_version: "109.0",
+                // the extension does not collect or transmit any user data
+                // https://extensionworkshop.com/documentation/develop/firefox-builtin-data-consent/
+                data_collection_permissions: {
+                  required: ["none"],
+                },
+              } as NonNullable<
+                UserManifest["browser_specific_settings"]
+              >["gecko"],
+            },
+          }
+        : {};
+
     return {
       name: "__MSG_ExtensionName__",
       description: "__MSG_ExtensionDescription__",
@@ -58,12 +78,7 @@ export default defineConfig({
         "storage",
       ],
       minimum_chrome_version: browser === "chrome" ? "90" : "91",
-      browser_specific_settings: {
-        gecko: {
-          id: "challenge-grid-autofill@ryan.thaut.me",
-          strict_min_version: "109.0",
-        },
-      },
+      ...firefox_settings,
     } satisfies UserManifest;
   },
 });
