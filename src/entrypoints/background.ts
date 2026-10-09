@@ -1,4 +1,4 @@
-import type { Menus, Tabs } from "wxt/browser";
+import type { Browser } from "wxt/browser";
 
 import {
   GRIDS_STORAGE_KEY,
@@ -9,8 +9,8 @@ import {
 import { isRuntimeMessage } from "@/utils/messages";
 
 const OnMenuClicked = async (
-  info: Menus.OnClickData,
-  tab: Tabs.Tab | undefined,
+  info: Browser.contextMenus.OnClickData,
+  tab: Browser.tabs.Tab | undefined,
 ) => {
   if (!tab?.id) {
     return;
@@ -44,7 +44,7 @@ const CreateMenus = async () => {
         grid.title,
       ),
       contexts: ["editable"],
-    } satisfies Menus.CreateCreatePropertiesType;
+    } satisfies Browser.contextMenus.CreateProperties;
 
     browser.contextMenus.create(menu);
   });

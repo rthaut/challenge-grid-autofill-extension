@@ -87,7 +87,7 @@ export const FillGridInTab = async (tabId: number, grid: Grid) => {
 
     // NOTE: Chrome throws a runtime error on `executeScript` if the script fails to load/execute, but Firefox has an `error` property on the result object, so we just throw the error if it exists to be consistent
     for (const injectionResult of injectionResults) {
-      if (injectionResult.error) {
+      if ("error" in injectionResult && injectionResult.error) {
         throw injectionResult.error;
       }
     }
@@ -131,9 +131,9 @@ export const GetResponseForChallengeFromGridMatrix = (
   let response = "";
 
   challenge.forEach((c) => {
-    const col = c[0];
+    const col = c[0]!;
     const row = c.split("").slice(1).join("");
-    response += matrix[rows.indexOf(row)][cols.indexOf(col)];
+    response += matrix[rows.indexOf(row)]![cols.indexOf(col)];
   });
 
   return response;
