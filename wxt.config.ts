@@ -69,7 +69,6 @@ export default defineConfig({
       page_action: {
         default_title: "__MSG_BrowserActionTitle__",
       },
-      host_permissions: ["<all_urls>"],
       permissions: [
         "activeTab",
         "contextMenus",
