@@ -190,7 +190,6 @@ export default function CreateEditGridApp() {
               [
                 gridFromStorage.title,
                 browser.i18n.getMessage(
-                  // @ts-expect-error - casing of `type` property is lowercase
                   `GridType_Title_${gridFromStorage.type}`,
                 ),
               ],
@@ -223,7 +222,7 @@ export default function CreateEditGridApp() {
       if (!IsGridTypeValid(type)) return;
       matrix = GetEmptyGridMatrix(type);
     }
-    matrix[row][col] = value;
+    matrix[row]![col] = value;
     setGridProp("matrix", matrix);
   };
 
@@ -394,10 +393,7 @@ export default function CreateEditGridApp() {
                   >
                     {GRID_TYPES.map((type) => (
                       <MenuItem key={type} value={type}>
-                        {browser.i18n.getMessage(
-                          // @ts-expect-error - casing of `type` property is lowercase
-                          `GridType_Title_${type}`,
-                        )}
+                        {browser.i18n.getMessage(`GridType_Title_${type}`)}
                       </MenuItem>
                     ))}
                   </Select>

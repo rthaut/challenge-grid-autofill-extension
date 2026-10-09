@@ -3,8 +3,8 @@ import { defineConfig, type UserManifest } from "wxt";
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   srcDir: "src",
-  // extensionApi: "chrome",
-  modules: ["@wxt-dev/module-react"],
+  publicDir: "src/public",
+  modules: ["@wxt-dev/webextension-polyfill", "@wxt-dev/module-react"],
   hooks: {
     "build:manifestGenerated": (wxt, manifest) => {
       if (manifest.options_ui?.page !== undefined) {

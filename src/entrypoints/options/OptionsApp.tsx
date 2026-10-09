@@ -56,14 +56,12 @@ export default function PopupApp() {
                       />
                     }
                     label={browser.i18n.getMessage(
-                      // @ts-expect-error - casing of `setting` property is camelCase
                       `Options_SettingLabel_${setting}`,
                     )}
                   />
                 </FormGroup>
                 <FormHelperText>
                   {browser.i18n.getMessage(
-                    // @ts-expect-error - casing of `setting` property is camelCase
                     `Options_SettingDescription_${setting}`,
                   )}
                 </FormHelperText>
