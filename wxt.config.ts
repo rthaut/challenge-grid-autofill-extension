@@ -5,6 +5,12 @@ export default defineConfig({
   srcDir: "src",
   publicDir: "src/public",
   modules: ["@wxt-dev/webextension-polyfill", "@wxt-dev/module-react"],
+  zip: {
+    // the sources zip is for Firefox add-on review, so it must build as-is:
+    // .npmrc sets legacy-peer-deps, without which `npm ci` fails
+    includeSources: ["**/*", ".npmrc"],
+    excludeSources: ["promo/**"],
+  },
   hooks: {
     "build:manifestGenerated": (wxt, manifest) => {
       if (manifest.options_ui?.page !== undefined) {
