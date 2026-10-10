@@ -21,7 +21,7 @@ import {
   IsGridValid,
 } from "@/utils/grids";
 
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -371,10 +371,12 @@ export default function CreateEditGridApp() {
           >
             <Stack
               direction="column"
-              justifyContent="flex-start"
-              alignItems="stretch"
               spacing={SPACING}
-              sx={{ pb: SPACING }}
+              sx={{
+                justifyContent: "flex-start",
+                alignItems: "stretch",
+                pb: SPACING,
+              }}
             >
               {isNewGrid && (
                 <FormControl fullWidth size="small">
@@ -441,9 +443,8 @@ export default function CreateEditGridApp() {
               )}
               <Stack
                 direction="row"
-                justifyContent="center"
-                alignItems="center"
                 spacing={SPACING}
+                sx={{ justifyContent: "center", alignItems: "center" }}
               >
                 {!isNewGrid && (
                   <Button
