@@ -90,13 +90,13 @@ const AutoFillGrid = async (grid: Grid) => {
   const inputs = document.querySelectorAll<HTMLInputElement>(querySelector);
   if (inputs.length === 1) {
     // single input field
-    inputs[0].setAttribute("value", response);
-    inputs[0].value = response;
+    inputs[0]!.setAttribute("value", response);
+    inputs[0]!.value = response;
   } else if (inputs.length === response.length) {
     // multiple input fields, one for each response character
     inputs.forEach((input, i) => {
-      input.setAttribute("value", response[i]);
-      input.value = response[i];
+      input.setAttribute("value", response[i]!);
+      input.value = response[i]!;
     });
   } else {
     // either no input fields, or a mis-matched amount of input fields
@@ -108,7 +108,7 @@ const AutoFillGrid = async (grid: Grid) => {
   }
 
   if (await GetSetting("autoSubmitForm")) {
-    const form = inputs[0].form;
+    const form = inputs[0]!.form;
     form?.submit();
   }
 };

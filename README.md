@@ -38,13 +38,13 @@ Contributions are always welcome! Even if you aren't comfortable coding, you can
 
 ### Localization/Translation
 
-This extension is setup to be fully localized/translated into multiple languages, but for now English is the only language with full translations. If you are able to help localize/translate, please [check out this guide](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization). All of the text for the extension is stored [here in the `/app/_locales` directory](https://github.com/rthaut/challenge-grid-autofill-extension/tree/master/app/_locales).
+This extension is setup to be fully localized/translated into multiple languages, but for now English is the only language with full translations. If you are able to help localize/translate, please [check out this guide](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization). All of the text for the extension is stored [here in the `/src/public/_locales` directory](https://github.com/rthaut/challenge-grid-autofill-extension/tree/master/src/public/_locales).
 
 ### Building the Extension
 
-**This extension uses the [WebExtension Toolbox](https://github.com/webextension-toolbox/webextension-toolbox#usage) for development and build processes.**
+**This extension uses [WXT](https://wxt.dev/) for development and build processes.**
 
-To build the extension from source code, you will need to use [Node Package Manager (npm)](https://www.npmjs.com/), which handles all of the dependencies needed for this project and is used to execute the various scripts for development/building/packaging/etc.
+To build the extension from source code, you will need [Node.js](https://nodejs.org/) 22 or later and [Node Package Manager (npm)](https://www.npmjs.com/), which handles all of the dependencies needed for this project and is used to execute the various scripts for development/building/packaging/etc.
 
 ```sh
 npm install
@@ -53,34 +53,27 @@ npm install
 Then you can run the development process (where the extension is auto-reloaded when changes are made) for your browser of choice:
 
 ```sh
-npm run dev <chrome/edge/firefox>
+npm run dev:<chrome/edge/firefox>
 ```
 
 Or you can generate a production build for your browser of choice:
 
 ```sh
-npm run build <chrome/edge/firefox>
+npm run build:<chrome/edge/firefox>
 ```
 
 ### Development Process
 
-To make development easier, you can start up a temporary development profile on [Mozilla Firefox](https://getfirefox.com) or [Google Chrome](google.com/chrome) with the extension already loaded. The browser will also automatically detect changes and reload the extension for you (read more about this on the [`web-ext` documentation pages](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Getting_started_with_web-ext)). Use the following commands **in parallel** to re-build the extension and re-load it in Firefox/Chrome automatically as you make changes:
+The `dev:chrome` and `dev:firefox` scripts start a temporary development profile on [Google Chrome](https://www.google.com/chrome/) or [Mozilla Firefox](https://getfirefox.com) with the extension already loaded, and reload the extension as you make changes.
 
-Firefox:
+To try a production build in a temporary profile instead, build it first and then start the browser with [`web-ext`](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Getting_started_with_web-ext):
 
 ```sh
-npm run dev firefox
+npm run build:firefox
 npm run start:firefox
 ```
 
-Chrome:
-
-```sh
-npm run dev chrome
-npm run start:chrome
-```
-
-**Note that you will need 2 terminal instances**, one for each of the above commands, as they both remain running until you cancel them (use <kbd>CTRL</kbd> + <kbd>c</kbd> to cancel each process in your terminal(s)).
+Use `build:chrome` and `start:chrome` for Chrome. Use <kbd>CTRL</kbd> + <kbd>c</kbd> to stop the browser process in your terminal.
 
 [chrome-url]: https://chrome.google.com/webstore/detail/challenge-grid-autofill/nifoiollkgakfnbefnepgonkmhijehhl
 [chrome-image-version]: https://img.shields.io/chrome-web-store/v/nifoiollkgakfnbefnepgonkmhijehhl?logo=googlechrome&style=for-the-badge
