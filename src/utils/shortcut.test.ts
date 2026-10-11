@@ -49,19 +49,21 @@ describe("ChooseGridForShortcut", () => {
     expect(ChooseGridForShortcut([first], undefined)).toEqual({
       status: "chosen",
       grid: first,
+      fromSeveral: false,
     });
   });
 
   it("ignores grids that aren't valid", () => {
     expect(
       ChooseGridForShortcut([first, { ...second, title: "" }], undefined),
-    ).toEqual({ status: "chosen", grid: first });
+    ).toEqual({ status: "chosen", grid: first, fromSeveral: false });
   });
 
   it("uses the grid last filled on the site when there are several", () => {
     expect(ChooseGridForShortcut([first, second], "second")).toEqual({
       status: "chosen",
       grid: second,
+      fromSeveral: true,
     });
   });
 

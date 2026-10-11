@@ -276,6 +276,31 @@
   "Notifications_Message_ChooseGrid": {
     "message": "You have more than one grid. Autofill this page once from the toolbar button or the right-click menu, and the shortcut will use the same grid on this site from then on."
   },
+  "Notifications_Title_ShortcutGrid": {
+    "message": "Autofilled"
+  },
+  "Notifications_Message_ShortcutGridWithPlaceholder": {
+    "message": "Filled the response from your \"$TITLE$\" grid. You can turn off this message in the extension's options.",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "Notifications_Message_ShortcutGridFailedWithPlaceholder": {
+    "message": "The shortcut used your \"$TITLE$\" grid. To use a different grid on this site, autofill it once from the toolbar button or the right-click menu.",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "Notifications_Title_CantAccessPage": {
+    "message": "Can't Autofill This Page"
+  },
+  "Notifications_Message_CantAccessPage": {
+    "message": "The browser doesn't let extensions run on this page. Browser pages and extension stores are always blocked. For a file on your computer, allow the extension to access file URLs in its settings."
+  },
   "Notifications_HelpMessage": {
     "message": "Please contact the extension author if this problem persists."
   },
@@ -284,6 +309,12 @@
   },
   "Options_SettingDescription_AutoSubmitForm": {
     "message": "Enable to automatically submit the challenge form after entering the response"
+  },
+  "Options_SettingLabel_NotifyShortcutGrid": {
+    "message": "Show Which Grid the Shortcut Used"
+  },
+  "Options_SettingDescription_NotifyShortcutGrid": {
+    "message": "Enable to show a notification naming the grid the autofill shortcut used, when you have more than one grid"
   },
   "Options_SettingLabel_ForceDarkMode": {
     "message": "Force Dark Mode"

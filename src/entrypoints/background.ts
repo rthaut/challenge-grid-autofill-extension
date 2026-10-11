@@ -1,17 +1,13 @@
 import type { Browser } from "wxt/browser";
 
-import { FillGridInTab } from "@/utils/fill";
+import { FillGridInTab, FillGridWithShortcut } from "@/utils/fill";
 import {
   GRIDS_STORAGE_KEY,
   GetGridFromStorageByID,
   GetGridsFromStorage,
 } from "@/utils/grids";
 import { ShowBasicNotification } from "@/utils/notifications";
-import {
-  AUTOFILL_COMMAND,
-  ChooseGridForShortcut,
-  GetRememberedGridIdForUrl,
-} from "@/utils/shortcut";
+import { AUTOFILL_COMMAND } from "@/utils/shortcut";
 
 const OnMenuClicked = async (
   info: Browser.contextMenus.OnClickData,
@@ -21,9 +17,13 @@ const OnMenuClicked = async (
     return;
   }
 
-  const grid = await GetGridFromStorageByID(info.menuItemId.toString());
+  const gridId = info.menuItemId.toString();
+  const grid = await GetGridFromStorageByID(gridId);
   if (!grid) {
-    return;
+    return ShowBasicNotification(
+      browser.i18n.getMessage("Notifications_Title_InvalidGrid"),
+      browser.i18n.getMessage("Notifications_Message_InvalidGrid", gridId),
+    );
   }
 
   await FillGridInTab(tab.id, grid);
@@ -64,29 +64,7 @@ const OnAutofillCommand = async (tab: Browser.tabs.Tab | undefined) => {
     return;
   }
 
-  const choice = ChooseGridForShortcut(
-    await GetGridsFromStorage(),
-    await GetRememberedGridIdForUrl(target.url),
-  );
-
-  switch (choice.status) {
-    case "chosen":
-      return FillGridInTab(target.id, choice.grid);
-
-    case "no-grids":
-      return ShowBasicNotification(
-        browser.i18n.getMessage("Notifications_Title_NoGrids"),
-        browser.i18n.getMessage("Notifications_Message_NoGrids"),
-        false,
-      );
-
-    case "ambiguous":
-      return ShowBasicNotification(
-        browser.i18n.getMessage("Notifications_Title_ChooseGrid"),
-        browser.i18n.getMessage("Notifications_Message_ChooseGrid"),
-        false,
-      );
-  }
+  await FillGridWithShortcut({ id: target.id, url: target.url });
 };
 
 export default defineBackground(() => {

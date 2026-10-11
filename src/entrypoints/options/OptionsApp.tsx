@@ -5,6 +5,7 @@ import { useTitle } from "react-use";
 import useSettingsStore from "@/hooks/useSettingsStore";
 import useTheme from "@/hooks/useTheme";
 
+import { DEFAULT_SETTINGS } from "@/utils/settings";
 import { AUTOFILL_COMMAND } from "@/utils/shortcut";
 
 import HelpIcon from "@mui/icons-material/HelpCenter";
@@ -126,14 +127,17 @@ export default function PopupApp() {
       <CssBaseline />
       <Paper elevation={0} sx={{ minHeight: "100vh" }}>
         <List>
-          {(["autoSubmitForm", "forceDarkMode"] as const).map((setting) => (
+          {(
+            ["autoSubmitForm", "notifyShortcutGrid", "forceDarkMode"] as const
+          ).map((setting) => (
             <ListItem key={setting} divider>
               <FormControl component="fieldset" variant="standard">
                 <FormGroup>
                   <FormControlLabel
                     control={
                       <Switch
-                        checked={settings[setting]}
+                        // settings saved before a setting existed don't have it yet
+                        checked={settings[setting] ?? DEFAULT_SETTINGS[setting]}
                         name={setting}
                         onChange={handleChange}
                       />

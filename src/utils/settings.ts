@@ -1,6 +1,7 @@
 export interface Settings {
   autoSubmitForm: boolean;
   forceDarkMode: boolean;
+  notifyShortcutGrid: boolean;
 }
 
 export const SETTINGS_STORAGE_KEY = "settings";
@@ -8,6 +9,7 @@ export const SETTINGS_STORAGE_KEY = "settings";
 export const DEFAULT_SETTINGS: Settings = {
   autoSubmitForm: false,
   forceDarkMode: false,
+  notifyShortcutGrid: true,
 };
 
 export const GetSetting = async (
