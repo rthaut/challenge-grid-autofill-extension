@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Entrust: React form</title>
+    <link rel="stylesheet" href="scenario.css" />
+    <script type="module">
+      // a real React form, loaded from esm.sh (so this page needs internet access)
+      import { createElement as h, useState } from "https://esm.sh/react@19";
+      import { createRoot } from "https://esm.sh/react-dom@19/client";
+
+      const EXPECTED = "HPZ";
+
+      // spaced out so the text can't be mistaken for a challenge (like "A1")
+      const spaced = (value) => value.split("").join(" ");
+
+      const ResponseForm = () => {
+        const [response, setResponse] = useState("");
+        const [result, setResult] = useState(null);
+
+        return h(
+          "form",
+          {
+            onSubmit: (event) => {
+              event.preventDefault();
+              setResult(response === EXPECTED);
+            },
+            onReset: () => {
+              setResponse("");
+              setResult(null);
+            },
+          },
+          h(
+            "p",
+            null,
+            h("input", {
+              type: "password",
+              name: "response",
+              maxLength: 3,
+              size: 3,
+              value: response,
+              onChange: (event) => setResponse(event.target.value),
+            }),
+          ),
+          h(
+            "p",
+            null,
+            "React has seen: ",
+            response ? spaced(response) : "nothing yet",
+          ),
+          h(
+            "p",
+            null,
+            h(
+              "button",
+              { type: "submit", disabled: response.length !== 3 },
+              "Submit",
+            ),
+            " ",
+            h("button", { type: "reset" }, "Reset"),
+          ),
+          h(
+            "p",
+            {
+              id: "result",
+              role: "status",
+              className: result === null ? "" : result ? "pass" : "fail",
+            },
+            result === null
+              ? ""
+              : `${result ? "Pass" : "Fail"}: React got ${
+                  response ? spaced(response) : "nothing"
+                }`,
+          ),
+        );
+      };
+
+      createRoot(document.getElementById("app")).render(h(ResponseForm));
+    </script>
+  </head>
+  <body>
+    <p><a href="./">All test pages</a></p>
+    <h1>Entrust: React form</h1>
+    <div class="instructions">
+      <p>
+        Import <code>resources/test-grids/Entrust.csv</code> as an Entrust grid,
+        then autofill this page and submit.
+      </p>
+      <p>
+        The form is a React app (loaded from esm.sh, so this page needs internet
+        access). React only enables the Submit button once it has seen all three
+        characters, and checks its own copy of the value, not the field.
+      </p>
+      <p>Expected: H P Z in the field</p>
+    </div>
+    <p class="challenge">Challenge prompt: A1 B2 C3</p>
+    <div id="app"></div>
+  </body>
+</html>

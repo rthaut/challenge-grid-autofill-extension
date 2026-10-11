@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Entrust: fields tracked like React</title>
+    <link rel="stylesheet" href="scenario.css" />
+    <script type="application/json" id="scenario">
+      { "grid": "Entrust.csv", "type": "entrust", "response": "H9Z" }
+    </script>
+    <script type="module">
+      import { trackInputs } from "./tracked-inputs.js";
+
+      const form = document.querySelector("form");
+      const inputs = [...form.querySelectorAll('input[name^="response"]')];
+      const seen = document.getElementById("seen");
+      const submit = form.querySelector('button[type="submit"]');
+
+      // spaced out so the text can't be mistaken for a challenge (like "A1")
+      const render = (values) => {
+        seen.textContent = values.some(Boolean)
+          ? values.map((value) => value || "_").join(" ")
+          : "nothing yet";
+        submit.disabled = values.some((value) => value === "");
+      };
+
+      window.getScenarioValues = trackInputs(inputs, render);
+      form.addEventListener("reset", () => location.reload());
+      render(window.getScenarioValues());
+    </script>
+    <script type="module" src="scenario.js"></script>
+  </head>
+  <body>
+    <p><a href="./">All test pages</a></p>
+    <h1>Entrust: fields tracked like React</h1>
+    <div class="instructions">
+      <p>
+        Import <code>resources/test-grids/Entrust.csv</code> as an Entrust grid,
+        then autofill this page and submit.
+      </p>
+      <p>
+        Like a React app, this page keeps its own copy of the field values and
+        only updates it when a field reports a change. It enables the Submit
+        button once every field has a value, and checks its own copy, not the
+        fields.
+      </p>
+      <p>Expected: H 9 Z, one character per field</p>
+    </div>
+    <p class="challenge">Challenge prompt: [A1] [J10] [C3]</p>
+    <form>
+      <p>
+        <input type="password" name="response1" maxlength="1" size="1" />
+        <input type="password" name="response2" maxlength="1" size="1" />
+        <input type="password" name="response3" maxlength="1" size="1" />
+      </p>
+      <p>The page has seen: <span id="seen"></span></p>
+      <p>
+        <button type="submit">Submit</button>
+        <button type="reset">Reset</button>
+      </p>
+    </form>
+    <p id="result" role="status"></p>
+  </body>
+</html>

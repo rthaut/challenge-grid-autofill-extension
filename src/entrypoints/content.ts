@@ -17,9 +17,10 @@ const AutoFillGrid = async (grid: Grid): Promise<FrameFillResult> => {
   }
 
   if (await GetSetting("autoSubmitForm")) {
-    // submit after this result is sent back, since submitting unloads the page
+    // submit after this result is sent back, since submitting unloads the page;
+    // requestSubmit() runs the page's submit handlers and validation, like clicking the submit button
     const form = result.inputs[0]!.form;
-    setTimeout(() => form?.submit());
+    setTimeout(() => form?.requestSubmit());
   }
 
   return { status: "filled" };

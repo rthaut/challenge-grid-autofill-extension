@@ -13,6 +13,8 @@ import {
   GetGridConfig,
   GetMatrixFromText,
 } from "@/utils/grids";
+// @ts-expect-error a plain script for the test pages, without types
+import { trackInputs } from "../../resources/test-pages/tracked-inputs.js";
 
 const TEST_PAGES_DIR = "resources/test-pages";
 
@@ -113,6 +115,43 @@ describe("FillResponseInputs", () => {
   it("fills nothing when there are no inputs", () => {
     expect(FillResponseInputs([], ["X", "Y", "Z"])).toBe(false);
   });
+
+  it("fires bubbling input and change events, like typing does", () => {
+    const form = document.createElement("form");
+    const inputs = createInputs(2);
+    form.append(...inputs);
+    const events: string[] = [];
+    form.addEventListener("input", (event) =>
+      events.push(`input:${(event.target as HTMLInputElement).value}`),
+    );
+    form.addEventListener("change", (event) =>
+      events.push(`change:${(event.target as HTMLInputElement).value}`),
+    );
+
+    FillResponseInputs(inputs, ["X", "Y"]);
+
+    expect(events).toEqual(["input:X", "change:X", "input:Y", "change:Y"]);
+  });
+
+  it("fills inputs that a page tracks the way React does", () => {
+    const inputs = createInputs(3);
+    const getTrackedValues = trackInputs(inputs);
+
+    FillResponseInputs(inputs, ["X", "Y", "Z"]);
+
+    expect(getTrackedValues()).toEqual(["X", "Y", "Z"]);
+  });
+
+  it("can't fill a tracked input just by setting its value and firing an event", () => {
+    // checks that the tracking in the test pages is as strict as React's
+    const [input] = createInputs(1);
+    const getTrackedValues = trackInputs([input]);
+
+    input!.value = "X";
+    input!.dispatchEvent(new Event("input", { bubbles: true }));
+
+    expect(getTrackedValues()).toEqual([""]);
+  });
 });
 
 describe("AutofillGridInDocument", () => {
@@ -159,6 +198,24 @@ describe("AutofillGridInDocument", () => {
       expect(values.join("")).toBe(scenario.response);
     }
     expect(others.every((value) => value === "")).toBe(true);
+  });
+
+  it("fills the page that tracks its fields the way React does", () => {
+    const page = loadTestPage("tracked-entrust-split.html");
+    document.body.innerHTML = page.body.innerHTML;
+    const getTrackedValues = trackInputs([
+      ...document.querySelectorAll<HTMLInputElement>(
+        'form input[name^="response"]',
+      ),
+    ]);
+    const scenario = JSON.parse(
+      page.getElementById("scenario")!.textContent!,
+    ) as Scenario;
+
+    const result = AutofillGridInDocument(document, loadTestGrid(scenario));
+
+    expect(result.status).toBe("filled");
+    expect(getTrackedValues().join("")).toBe(scenario.response);
   });
 
   it("reports a missing challenge", () => {
