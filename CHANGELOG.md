@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Other
+
+- Require Chrome or Edge 117 or later, or Firefox 121 or later
+- Update Material UI to version 9
+
 ## [2.0.1] - 2026-10-10
 
 ### Bug Fixes
