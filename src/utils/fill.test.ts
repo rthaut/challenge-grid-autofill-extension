@@ -144,8 +144,24 @@ describe("notifications", () => {
       ]);
     });
 
-    it("explains how to choose a grid when it can't tell which to use", async () => {
+    it("opens the toolbar popup to choose a grid when it can't tell which to use", async () => {
       await saveGrids(entrustGrid("first"), entrustGrid("second"));
+      const openPopup = vi
+        .spyOn(fakeBrowser.action, "openPopup")
+        .mockResolvedValue(undefined);
+
+      expect(await FillGridWithShortcut(TAB)).toBeUndefined();
+      expect(openPopup).toHaveBeenCalled();
+      expect(executeScript).not.toHaveBeenCalled();
+      expect(notifications()).toEqual([]);
+    });
+
+    it("explains how to choose a grid when it can't tell which to use and can't open the popup", async () => {
+      await saveGrids(entrustGrid("first"), entrustGrid("second"));
+      vi.spyOn(fakeBrowser.action, "openPopup").mockRejectedValue(
+        new Error("openPopup requires a user gesture"),
+      );
+      vi.spyOn(console, "info").mockImplementation(() => {});
 
       expect(await FillGridWithShortcut(TAB)).toBeUndefined();
       expect(executeScript).not.toHaveBeenCalled();

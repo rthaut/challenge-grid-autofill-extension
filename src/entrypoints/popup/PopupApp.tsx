@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useTitle } from "react-use";
 
 import useGridStore from "@/hooks/useGridStore";
@@ -5,11 +6,13 @@ import useTheme from "@/hooks/useTheme";
 
 import { FillGridInActiveTab } from "@/utils/fill";
 import { type Grid, IsGridValid, OpenEditPage } from "@/utils/grids";
+import { TakeChooseGridRequest } from "@/utils/shortcut";
 
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import SettingsIcon from "@mui/icons-material/Settings";
 
+import Alert from "@mui/material/Alert";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
@@ -27,6 +30,12 @@ export default function PopupApp() {
   const theme = useTheme();
 
   const [grids] = useGridStore();
+
+  // whether the keyboard shortcut opened the popup because it couldn't tell which grid to use
+  const [choosingForShortcut, setChoosingForShortcut] = React.useState(false);
+  React.useEffect(() => {
+    TakeChooseGridRequest().then(setChoosingForShortcut);
+  }, []);
 
   const optionsClickHandler = () =>
     browser.runtime.openOptionsPage().then(() => window.close());
@@ -69,8 +78,14 @@ export default function PopupApp() {
         {grids.length > 0 && (
           <>
             <Divider />
+            {choosingForShortcut && (
+              // wraps to the width of the menu instead of widening the popup
+              <Alert severity="info" sx={{ contain: "inline-size" }}>
+                {browser.i18n.getMessage("Popup_ChooseGridForShortcut_Text")}
+              </Alert>
+            )}
             <List dense disablePadding>
-              {grids.filter(IsGridValid).map((grid) => (
+              {grids.filter(IsGridValid).map((grid, index) => (
                 <ListItem
                   key={grid.id}
                   disableGutters
@@ -80,7 +95,11 @@ export default function PopupApp() {
                     </IconButton>
                   }
                 >
-                  <ListItemButton onClick={fillGridClickHandler(grid)}>
+                  <ListItemButton
+                    // so the grid can be chosen from the keyboard
+                    autoFocus={choosingForShortcut && index === 0}
+                    onClick={fillGridClickHandler(grid)}
+                  >
                     <ListItemText
                       primary={grid.title}
                       sx={{ whiteSpace: "nowrap" }}

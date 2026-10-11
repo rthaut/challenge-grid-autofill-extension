@@ -1,13 +1,16 @@
 import { readFileSync } from "node:fs";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fakeBrowser } from "wxt/testing/fake-browser";
 
 import { type Grid, GetGridConfig, GetMatrixFromText } from "@/utils/grids";
 import {
+  CHOOSE_GRID_REQUEST_STORAGE_KEY,
   ChooseGridForShortcut,
   GetRememberedGridIdForUrl,
   GetSiteFromUrl,
+  OpenPopupToChooseGrid,
   RememberGridForUrl,
+  TakeChooseGridRequest,
 } from "@/utils/shortcut";
 
 const entrustGrid = (id: string): Grid => ({
@@ -121,5 +124,41 @@ describe("RememberGridForUrl", () => {
     await RememberGridForUrl("chrome://newtab", "first");
 
     expect(await GetRememberedGridIdForUrl("chrome://newtab")).toBeUndefined();
+  });
+});
+
+describe("OpenPopupToChooseGrid", () => {
+  beforeEach(() => {
+    fakeBrowser.reset();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("tells the popup why it opened, once", async () => {
+    vi.spyOn(fakeBrowser.action, "openPopup").mockResolvedValue(undefined);
+
+    expect(await OpenPopupToChooseGrid()).toBe(true);
+    expect(await TakeChooseGridRequest()).toBe(true);
+    expect(await TakeChooseGridRequest()).toBe(false);
+  });
+
+  it("reports when the browser won't open the popup, and leaves no request for the next popup", async () => {
+    vi.spyOn(fakeBrowser.action, "openPopup").mockRejectedValue(
+      new Error("openPopup requires a user gesture"),
+    );
+    vi.spyOn(console, "info").mockImplementation(() => {});
+
+    expect(await OpenPopupToChooseGrid()).toBe(false);
+    expect(await TakeChooseGridRequest()).toBe(false);
+  });
+
+  it("ignores an old request, like one left by a popup that didn't open", async () => {
+    await fakeBrowser.storage.session.set({
+      [CHOOSE_GRID_REQUEST_STORAGE_KEY]: Date.now() - 60_000,
+    });
+
+    expect(await TakeChooseGridRequest()).toBe(false);
   });
 });
