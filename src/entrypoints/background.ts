@@ -6,6 +6,12 @@ import {
   GetGridFromStorageByID,
   GetGridsFromStorage,
 } from "@/utils/grids";
+import { ShowBasicNotification } from "@/utils/notifications";
+import {
+  AUTOFILL_COMMAND,
+  ChooseGridForShortcut,
+  GetRememberedGridIdForUrl,
+} from "@/utils/shortcut";
 
 const OnMenuClicked = async (
   info: Browser.contextMenus.OnClickData,
@@ -49,9 +55,49 @@ const CreateMenus = async () => {
   });
 };
 
+const OnAutofillCommand = async (tab: Browser.tabs.Tab | undefined) => {
+  const target =
+    tab?.id !== undefined
+      ? tab
+      : (await browser.tabs.query({ active: true, currentWindow: true }))[0];
+  if (target?.id === undefined) {
+    return;
+  }
+
+  const choice = ChooseGridForShortcut(
+    await GetGridsFromStorage(),
+    await GetRememberedGridIdForUrl(target.url),
+  );
+
+  switch (choice.status) {
+    case "chosen":
+      return FillGridInTab(target.id, choice.grid);
+
+    case "no-grids":
+      return ShowBasicNotification(
+        browser.i18n.getMessage("Notifications_Title_NoGrids"),
+        browser.i18n.getMessage("Notifications_Message_NoGrids"),
+        false,
+      );
+
+    case "ambiguous":
+      return ShowBasicNotification(
+        browser.i18n.getMessage("Notifications_Title_ChooseGrid"),
+        browser.i18n.getMessage("Notifications_Message_ChooseGrid"),
+        false,
+      );
+  }
+};
+
 export default defineBackground(() => {
   browser.runtime.onInstalled.addListener(() => {
     CreateMenus();
+  });
+
+  browser.commands.onCommand.addListener((command, tab) => {
+    if (command === AUTOFILL_COMMAND) {
+      OnAutofillCommand(tab);
+    }
   });
 
   browser.storage.onChanged.addListener((changes, area) => {
