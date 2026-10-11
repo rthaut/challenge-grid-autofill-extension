@@ -73,6 +73,10 @@ export default function PopupApp() {
       <Paper
         elevation={0}
         sx={{
+          // inset from the edges (like the hint), so rounded popup corners don't clip the focus outline
+          "& .MuiList-root": { px: 1, py: 0.5 },
+          "& .MuiList-root:last-of-type": { pb: 1 },
+          "& .MuiListItemButton-root": { borderRadius: 1 },
           // outline the whole row (including any edit button) for keyboard focus, instead of a faint gray fill
           "& .MuiListItem-root:has(.MuiListItemButton-root.Mui-focusVisible)": {
             outline: 2,
