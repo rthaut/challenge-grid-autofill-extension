@@ -1,4 +1,4 @@
-import { GRID_CONFIGS, IsGridTypeValid } from "@/utils/grids";
+import { type GridConfig } from "@/utils/grids";
 
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Table from "@mui/material/Table";
@@ -19,19 +19,15 @@ const StyledOutlinedInput = styled(OutlinedInput)({
 });
 
 export default function GridMatrixTable({
-  type,
+  config,
   matrix,
   setMatrixCell,
 }: {
-  type: keyof typeof GRID_CONFIGS;
+  config: GridConfig;
   matrix: string[][] | undefined;
   setMatrixCell: (row: number, col: number, value: string) => void;
 }) {
-  if (!IsGridTypeValid(type)) {
-    return null;
-  }
-
-  const { MATRIX_COLS, MATRIX_ROWS } = GRID_CONFIGS[type];
+  const { MATRIX_COLS, MATRIX_ROWS, MATRIX_CELL_LENGTH } = config;
 
   return (
     <TableContainer>
@@ -61,14 +57,19 @@ export default function GridMatrixTable({
                 <TableCell key={colIndex} align="center" padding="none">
                   <StyledOutlinedInput
                     color="primary"
-                    inputProps={{ maxLength: 1 }}
+                    inputProps={{ maxLength: MATRIX_CELL_LENGTH }}
                     margin="none"
                     onChange={(event) =>
                       setMatrixCell(rowIndex, colIndex, event.target.value)
                     }
                     required
                     size="small"
-                    sx={{ input: { textAlign: "center" } }}
+                    sx={{
+                      input: {
+                        textAlign: "center",
+                        minWidth: `${MATRIX_CELL_LENGTH + 1}ch`,
+                      },
+                    }}
                     value={matrix?.[rowIndex]?.[colIndex] ?? ""}
                   />
                 </TableCell>

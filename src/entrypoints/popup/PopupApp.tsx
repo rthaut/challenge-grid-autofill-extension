@@ -3,12 +3,8 @@ import { useTitle } from "react-use";
 import useGridStore from "@/hooks/useGridStore";
 import useTheme from "@/hooks/useTheme";
 
-import {
-  type Grid,
-  FillGridInActiveTab,
-  IsGridValid,
-  OpenEditPage,
-} from "@/utils/grids";
+import { FillGridInActiveTab } from "@/utils/fill";
+import { type Grid, IsGridValid, OpenEditPage } from "@/utils/grids";
 
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
