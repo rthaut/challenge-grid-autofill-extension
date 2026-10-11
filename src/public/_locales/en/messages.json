@@ -43,7 +43,7 @@
     "message": "Add a New Grid"
   },
   "Popup_ChooseGridForShortcut_Text": {
-    "message": "Choose a grid to fill this page with. The shortcut will use it on this site from then on."
+    "message": "Select a grid to use for this page. The shortcut will remember your choice for this site."
   },
   "Popup_Options_Text": {
     "message": "Options"
