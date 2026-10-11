@@ -317,7 +317,7 @@
     "message": "Show Which Grid the Shortcut Used"
   },
   "Options_SettingDescription_NotifyShortcutGrid": {
-    "message": "Enable to show a notification naming the grid the autofill shortcut used, when you have more than one grid"
+    "message": "Enable to show a notification naming the grid used by the autofill shortcut (only when multiple grids are available)"
   },
   "Options_SettingLabel_ForceDarkMode": {
     "message": "Force Dark Mode"
@@ -329,7 +329,7 @@
     "message": "Autofill Shortcut"
   },
   "Options_ShortcutDescription": {
-    "message": "Fills the grid on the current page: your only grid, or the one you last used on that site."
+    "message": "Attempts to automatically fill the grid on the current page"
   },
   "Options_ShortcutNotSet": {
     "message": "Not set"
