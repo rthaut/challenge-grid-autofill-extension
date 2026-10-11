@@ -14,6 +14,7 @@ import {
   type Grid,
   type GridType,
   GetEmptyGridMatrix,
+  GetMatrixFromText,
   GRID_CONFIGS,
   GRID_TYPES,
   IsGridMatrixValid,
@@ -234,17 +235,10 @@ export default function CreateEditGridApp() {
       reader.onload = (event) => {
         try {
           const data = event?.target?.result?.toString();
-          const matrix = data
-            ?.replace(/\r?\n$/, "")
-            .split(/\r?\n/)
-            .slice(GRID_CONFIGS[grid.type!]?.MATRIX_ROWS.length * -1) // take last # rows (dirty way to skip optional column headers)
-            .map(
-              (row) =>
-                row
-                  .split(/,|\t/)
-                  .map((cell) => cell.replace(/\"|\'/g, "").trim())
-                  .slice(0, GRID_CONFIGS[grid.type!]?.MATRIX_COLS.length), // take first # columns
-            );
+          const matrix =
+            data === undefined
+              ? undefined
+              : GetMatrixFromText(data, grid.type!);
           resolve(matrix);
         } catch (error) {
           console.error("Failed to parse file contents:", error);
