@@ -67,7 +67,8 @@ export default function GridMatrixTable({
                     sx={{
                       input: {
                         textAlign: "center",
-                        minWidth: `${MATRIX_CELL_LENGTH + 1}ch`,
+                        // sized to the cell, since an input is about 20 characters wide by default
+                        width: `${MATRIX_CELL_LENGTH + 1}ch`,
                       },
                     }}
                     value={matrix?.[rowIndex]?.[colIndex] ?? ""}
