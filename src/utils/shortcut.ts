@@ -106,7 +106,7 @@ export const RememberGridForUrl = async (
 
 /**
  * Opens the toolbar popup so the user can choose a grid for the shortcut, where the browser allows it
- * (Chrome and Edge 127 or later; Firefox only allows it while handling the shortcut itself, before any `await`)
+ * (Chrome and Edge 127 or later; some Firefox versions only allow it while handling the shortcut itself, before any `await`)
  * @returns {Promise<boolean>} whether the popup opened
  */
 export const OpenPopupToChooseGrid = async () => {

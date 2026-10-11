@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add custom grids, with your own columns, rows, labels and characters per cell (#10)
 - Add a keyboard shortcut (Alt+Shift+G by default) that autofills the current page with your only grid, or the grid you last used on that site (#15)
-- When the shortcut can't tell which grid to use, open the toolbar menu to choose one (Chrome and Edge 127 or later; otherwise a notification explains how to choose)
+- When the shortcut can't tell which grid to use, open the toolbar menu to choose one where the browser allows it (like Chrome and Edge 127 or later); otherwise a notification explains how to choose
 - When you have more than one grid, show which grid the shortcut used, with a setting to turn this off. If the fill fails, the error names the grid and how to use a different one
 
 ### Bug Fixes
