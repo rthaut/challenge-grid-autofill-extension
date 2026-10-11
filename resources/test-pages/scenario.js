@@ -8,7 +8,8 @@
 
 const scenario = JSON.parse(document.getElementById("scenario").textContent);
 const form = document.querySelector("form");
-const inputs = [...form.querySelectorAll("input")];
+// the response fields are named "response" or "response1", "response2", ...
+const inputs = [...form.querySelectorAll('input[name^="response"]')];
 const result = document.getElementById("result");
 
 // spaced out so the text can't be mistaken for a challenge (like "A1")
