@@ -79,8 +79,8 @@ export default function PopupApp() {
           <>
             <Divider />
             {choosingForShortcut && (
-              // wraps to the width of the menu instead of widening the popup
-              <Alert severity="info" sx={{ contain: "inline-size" }}>
+              // a fixed width so the hint reads well, and inset so it isn't clipped by rounded popup corners
+              <Alert severity="info" sx={{ m: 1, width: "18rem" }}>
                 {browser.i18n.getMessage("Popup_ChooseGridForShortcut_Text")}
               </Alert>
             )}
