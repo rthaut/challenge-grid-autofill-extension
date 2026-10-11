@@ -1,0 +1,32 @@
+body {
+  font-family: system-ui, sans-serif;
+  margin: 2rem auto;
+  max-width: 40rem;
+  padding: 0 1rem;
+}
+
+.instructions {
+  background: #f3f4f6;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+.challenge {
+  font-size: 1.25rem;
+}
+
+#result.pass {
+  color: #15803d;
+  font-weight: bold;
+}
+
+#result.fail {
+  color: #b91c1c;
+  font-weight: bold;
+}
+
+iframe {
+  border: 1px dashed #9ca3af;
+  height: 24rem;
+  width: 100%;
+}
