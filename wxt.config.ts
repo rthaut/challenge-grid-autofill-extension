@@ -48,7 +48,7 @@ export default defineConfig({
             browser_specific_settings: {
               gecko: {
                 id: "challenge-grid-autofill@ryan.thaut.me",
-                strict_min_version: "109.0",
+                strict_min_version: "121.0",
                 // the extension does not collect or transmit any user data
                 // https://extensionworkshop.com/documentation/develop/firefox-builtin-data-consent/
                 data_collection_permissions: {
@@ -82,7 +82,7 @@ export default defineConfig({
         "scripting",
         "storage",
       ],
-      minimum_chrome_version: browser === "chrome" ? "90" : "91",
+      minimum_chrome_version: "117",
       ...firefox_settings,
     } satisfies UserManifest;
   },
