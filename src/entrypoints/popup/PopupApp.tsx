@@ -47,10 +47,44 @@ export default function PopupApp() {
   const fillGridClickHandler = (grid: Grid) => () =>
     FillGridInActiveTab(grid).then(() => window.close());
 
+  // the up and down arrow keys move between the grids, from a grid or its edit button
+  const gridListKeyDownHandler = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (event.key !== "ArrowDown" && event.key !== "ArrowUp") {
+      return;
+    }
+
+    const rows = [...event.currentTarget.children];
+    const current = rows.findIndex((row) =>
+      row.contains(document.activeElement),
+    );
+    const next =
+      current === -1
+        ? 0
+        : (current + (event.key === "ArrowDown" ? 1 : -1) + rows.length) %
+          rows.length;
+
+    rows[next]?.querySelector<HTMLElement>(".MuiListItemButton-root")?.focus();
+    event.preventDefault();
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Paper elevation={0}>
+      <Paper
+        elevation={0}
+        sx={{
+          // outline the whole row (including any edit button) for keyboard focus, instead of a faint gray fill
+          "& .MuiListItem-root:has(.MuiListItemButton-root.Mui-focusVisible)": {
+            outline: 2,
+            outlineColor: "primary.main",
+            outlineOffset: -2,
+            borderRadius: 1,
+          },
+          "& .MuiListItemButton-root.Mui-focusVisible": {
+            bgcolor: "transparent",
+          },
+        }}
+      >
         <List dense disablePadding>
           <ListItem disableGutters>
             <ListItemButton onClick={optionsClickHandler}>
@@ -84,7 +118,7 @@ export default function PopupApp() {
                 {browser.i18n.getMessage("Popup_ChooseGridForShortcut_Text")}
               </Alert>
             )}
-            <List dense disablePadding>
+            <List dense disablePadding onKeyDown={gridListKeyDownHandler}>
               {grids.filter(IsGridValid).map((grid, index) => (
                 <ListItem
                   key={grid.id}
