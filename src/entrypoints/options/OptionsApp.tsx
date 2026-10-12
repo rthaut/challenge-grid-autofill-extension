@@ -27,6 +27,21 @@ import { ThemeProvider } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
 
+const SETTING_MESSAGES = {
+  autoSubmitForm: {
+    label: "Options_SettingLabel_AutoSubmitForm",
+    description: "Options_SettingDescription_AutoSubmitForm",
+  },
+  notifyShortcutGrid: {
+    label: "Options_SettingLabel_NotifyShortcutGrid",
+    description: "Options_SettingDescription_NotifyShortcutGrid",
+  },
+  forceDarkMode: {
+    label: "Options_SettingLabel_ForceDarkMode",
+    description: "Options_SettingDescription_ForceDarkMode",
+  },
+} as const;
+
 const manifest = browser.runtime.getManifest();
 
 // Firefox 137+ can open its shortcut settings; older versions and other browsers can't
@@ -143,13 +158,13 @@ export default function PopupApp() {
                       />
                     }
                     label={browser.i18n.getMessage(
-                      `Options_SettingLabel_${setting}`,
+                      SETTING_MESSAGES[setting].label,
                     )}
                   />
                 </FormGroup>
                 <FormHelperText>
                   {browser.i18n.getMessage(
-                    `Options_SettingDescription_${setting}`,
+                    SETTING_MESSAGES[setting].description,
                   )}
                 </FormHelperText>
               </FormControl>
