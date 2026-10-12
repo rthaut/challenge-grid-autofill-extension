@@ -54,7 +54,7 @@ import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
 import StepContent from "@mui/material/StepContent";
 import Stepper from "@mui/material/Stepper";
-import { type Breakpoint, styled, ThemeProvider } from "@mui/material/styles";
+import { styled, ThemeProvider } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
@@ -422,22 +422,6 @@ export default function CreateEditGridApp() {
     setAlertGridDeletedDialogOpen(true);
   };
 
-  const getContainerMaxWidth = () => {
-    let maxWidth: Breakpoint = "sm";
-    if (config !== undefined) {
-      const width = config.MATRIX_COLS.length * config.MATRIX_CELL_LENGTH;
-      if (width > 30) {
-        maxWidth = "xl";
-      } else if (width > 20) {
-        maxWidth = "lg";
-      } else if (width > 15) {
-        maxWidth = "md";
-      }
-    }
-
-    return maxWidth;
-  };
-
   const settingsCaption =
     grid.type === undefined
       ? browser.i18n.getMessage(
@@ -454,7 +438,15 @@ export default function CreateEditGridApp() {
       <CssBaseline />
       <Paper elevation={0}>
         <PageHeader title={pageTitle} />
-        <Container maxWidth={getContainerMaxWidth()}>
+        {/* as wide as the grid needs (but no narrower than a small screen), up to the width of the window */}
+        <Container
+          maxWidth={false}
+          sx={(theme) => ({
+            width: "fit-content",
+            minWidth: `min(100%, ${theme.breakpoints.values.sm}px)`,
+            maxWidth: "100%",
+          })}
+        >
           <Box
             component="form"
             noValidate
@@ -481,7 +473,12 @@ export default function CreateEditGridApp() {
                   {browser.i18n.getMessage("ManageGrid_StepLabel_GridSettings")}
                 </StepButton>
                 <StepContent>
-                  <Stack direction="column" spacing={SPACING} sx={{ py: 1 }}>
+                  {/* only the grid sets the page width, so long help text wraps instead */}
+                  <Stack
+                    direction="column"
+                    spacing={SPACING}
+                    sx={{ py: 1, contain: "inline-size" }}
+                  >
                     {isNewGrid && (
                       <FormControl fullWidth size="small">
                         <InputLabel>
