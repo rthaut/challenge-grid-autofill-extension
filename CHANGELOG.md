@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - Unreleased
+
 ### Enhancements
 
 - Add custom grids, with your own columns, rows, labels and characters per cell (#10)
@@ -64,7 +66,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Initial Release
 
-[unreleased]: https://github.com/rthaut/challenge-grid-autofill-extension/compare/v2.0.1...HEAD
+[unreleased]: https://github.com/rthaut/challenge-grid-autofill-extension/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/rthaut/challenge-grid-autofill-extension/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/rthaut/challenge-grid-autofill-extension/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/rthaut/challenge-grid-autofill-extension/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/rthaut/challenge-grid-autofill-extension/compare/v1.0.1...v1.1.0
