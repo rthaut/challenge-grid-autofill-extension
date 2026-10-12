@@ -18,7 +18,7 @@
 * Supports Entrust and Deepnet grids, plus custom grids with your own size, labels and number of characters per cell
 * Store multiple grids directly in your browser and sync them across multiple devices
 * Quickly import grids from CSV files and/or use the built-in grid editor
-* Autofill with a keyboard shortcut (<kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd> by default), which uses your only grid or the grid you last used on that site
+* Autofill with a keyboard shortcut (<kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd> by default), which uses your only grid or the grid you last used on that site, and tells you which grid it used when you have more than one (you can turn this off in the options)
 * Optionally automatically submit the challenge form after entering a response
 * Optionally force the UI elements of this extension to use Dark Mode
 

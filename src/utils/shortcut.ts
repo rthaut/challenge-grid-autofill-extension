@@ -6,7 +6,8 @@ export const AUTOFILL_COMMAND = "autofill-grid";
 export const LAST_GRID_BY_SITE_STORAGE_KEY = "lastGridBySite";
 
 export type ShortcutGridChoice =
-  | { status: "chosen"; grid: Grid }
+  // `fromSeveral` is whether the grid was chosen from more than one valid grid
+  | { status: "chosen"; grid: Grid; fromSeveral: boolean }
   | { status: "no-grids" }
   | { status: "ambiguous" };
 
@@ -47,12 +48,12 @@ export const ChooseGridForShortcut = (
   }
 
   if (validGrids.length === 1) {
-    return { status: "chosen", grid: validGrids[0]! };
+    return { status: "chosen", grid: validGrids[0]!, fromSeveral: false };
   }
 
   const remembered = validGrids.find((grid) => grid.id === rememberedGridId);
   if (remembered) {
-    return { status: "chosen", grid: remembered };
+    return { status: "chosen", grid: remembered, fromSeveral: true };
   }
 
   return { status: "ambiguous" };
