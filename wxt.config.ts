@@ -82,6 +82,17 @@ export default defineConfig({
         "scripting",
         "storage",
       ],
+      commands: {
+        // keep the name in sync with AUTOFILL_COMMAND in src/utils/shortcut.ts
+        "autofill-grid": {
+          suggested_key: { default: "Alt+Shift+G", mac: "MacCtrl+Shift+G" },
+          description: "__MSG_Command_AutofillGrid__",
+        },
+        // opens the popup; no default key, but users can assign one
+        _execute_action: {
+          description: "__MSG_Command_OpenPopup__",
+        },
+      },
       minimum_chrome_version: "117",
       ...firefox_settings,
     } satisfies UserManifest;

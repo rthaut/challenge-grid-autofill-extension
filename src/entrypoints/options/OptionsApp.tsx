@@ -1,10 +1,16 @@
+import * as React from "react";
+
 import { useTitle } from "react-use";
 
 import useSettingsStore from "@/hooks/useSettingsStore";
 import useTheme from "@/hooks/useTheme";
 
-import HelpIcon from "@mui/icons-material/HelpCenter";
+import { AUTOFILL_COMMAND } from "@/utils/shortcut";
 
+import HelpIcon from "@mui/icons-material/HelpCenter";
+import KeyboardIcon from "@mui/icons-material/Keyboard";
+
+import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -21,6 +27,83 @@ import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
 
 const manifest = browser.runtime.getManifest();
+
+// Firefox 137+ can open its shortcut settings; older versions and other browsers can't
+const commands = browser.commands as typeof browser.commands & {
+  openShortcutSettings?: () => Promise<void>;
+};
+
+const openShortcutSettings = () => {
+  if (commands.openShortcutSettings) {
+    return commands.openShortcutSettings();
+  }
+
+  return browser.tabs.create({
+    url: import.meta.env.EDGE
+      ? "edge://extensions/shortcuts"
+      : "chrome://extensions/shortcuts",
+  });
+};
+
+const canOpenShortcutSettings =
+  !import.meta.env.FIREFOX || commands.openShortcutSettings !== undefined;
+
+function ShortcutSetting() {
+  // `null` until the shortcut is loaded, and "" when it isn't set
+  const [shortcut, setShortcut] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const load = () =>
+      browser.commands
+        .getAll()
+        .then((all) =>
+          setShortcut(
+            all.find((command) => command.name === AUTOFILL_COMMAND)
+              ?.shortcut ?? "",
+          ),
+        );
+
+    load();
+    // the shortcut may be changed in another tab
+    window.addEventListener("focus", load);
+    return () => window.removeEventListener("focus", load);
+  }, []);
+
+  return (
+    <ListItem divider>
+      <ListItemIcon>
+        <KeyboardIcon sx={{ color: "primary.main", fontSize: 32 }} />
+      </ListItemIcon>
+      <ListItemText disableTypography>
+        <Typography>
+          {browser.i18n.getMessage("Options_ShortcutLabel")}:{" "}
+          <strong>
+            {shortcut === null
+              ? ""
+              : shortcut || browser.i18n.getMessage("Options_ShortcutNotSet")}
+          </strong>
+        </Typography>
+        <Typography variant="body2" color="textSecondary">
+          {browser.i18n.getMessage("Options_ShortcutDescription")}
+        </Typography>
+        {canOpenShortcutSettings ? (
+          <Button
+            size="small"
+            variant="outlined"
+            sx={{ mt: 1 }}
+            onClick={openShortcutSettings}
+          >
+            {browser.i18n.getMessage("Options_ShortcutButtonText")}
+          </Button>
+        ) : (
+          <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+            {browser.i18n.getMessage("Options_ShortcutFirefoxHelp")}
+          </Typography>
+        )}
+      </ListItemText>
+    </ListItem>
+  );
+}
 
 export default function PopupApp() {
   useTitle(browser.i18n.getMessage("ExtensionName"));
@@ -68,6 +151,7 @@ export default function PopupApp() {
               </FormControl>
             </ListItem>
           ))}
+          <ShortcutSetting />
           <ListItem>
             <ListItemIcon>
               <HelpIcon sx={{ color: "primary.main", fontSize: 48 }} />

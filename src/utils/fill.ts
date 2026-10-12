@@ -1,6 +1,7 @@
 import { type Grid } from "@/utils/grids";
 import { type FrameFillResult } from "@/utils/messages";
 import { ShowBasicNotification } from "@/utils/notifications";
+import { RememberGridForUrl } from "@/utils/shortcut";
 
 // when no frame filled the grid, the most useful error to show: one from a frame that found a challenge wins over "missing challenge"
 const ERROR_PRIORITY: FrameFillResult["status"][] = [
@@ -114,7 +115,11 @@ export const FillGridInTab = async (tabId: number, grid: Grid) => {
       ),
     );
 
-    if (result.status !== "filled") {
+    if (result.status === "filled") {
+      // so the keyboard shortcut can fill the same grid on this site
+      const tab = await browser.tabs.get(tabId);
+      await RememberGridForUrl(tab.url, grid.id);
+    } else {
       await NotifyFillResult(result, grid);
     }
 

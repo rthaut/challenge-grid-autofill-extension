@@ -15,6 +15,12 @@
     "message": "Challenge Grid Autofill",
     "description": "The title of the browser action button"
   },
+  "Command_AutofillGrid": {
+    "message": "Autofill the grid on the current page"
+  },
+  "Command_OpenPopup": {
+    "message": "Open the list of grids"
+  },
   "GridType_Title_Deepnet": {
     "message": "Deepnet GridID"
   },
@@ -258,6 +264,18 @@
       }
     }
   },
+  "Notifications_Title_NoGrids": {
+    "message": "No Grids"
+  },
+  "Notifications_Message_NoGrids": {
+    "message": "Add a grid from the toolbar button first, then use the shortcut again."
+  },
+  "Notifications_Title_ChooseGrid": {
+    "message": "Choose a Grid"
+  },
+  "Notifications_Message_ChooseGrid": {
+    "message": "You have more than one grid. Autofill this page once from the toolbar button or the right-click menu, and the shortcut will use the same grid on this site from then on."
+  },
   "Notifications_HelpMessage": {
     "message": "Please contact the extension author if this problem persists."
   },
@@ -272,6 +290,21 @@
   },
   "Options_SettingDescription_ForceDarkMode": {
     "message": "Enable to force this extension to use dark mode (regardless of your system preferences)"
+  },
+  "Options_ShortcutLabel": {
+    "message": "Autofill Shortcut"
+  },
+  "Options_ShortcutDescription": {
+    "message": "Fills the grid on the current page: your only grid, or the one you last used on that site."
+  },
+  "Options_ShortcutNotSet": {
+    "message": "Not set"
+  },
+  "Options_ShortcutButtonText": {
+    "message": "Change Shortcut"
+  },
+  "Options_ShortcutFirefoxHelp": {
+    "message": "To change it, open Add-ons and Themes, click the gear button, and choose Manage Extension Shortcuts."
   },
   "Options_BugEnhancement_QuestionText": {
     "message": "Found a bug? Have an idea for an enhancement?"

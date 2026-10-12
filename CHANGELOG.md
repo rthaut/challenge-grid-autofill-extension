@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Enhancements
 
 - Add custom grids, with your own columns, rows, labels and characters per cell (#10)
+- Add a keyboard shortcut (Alt+Shift+G by default) that autofills the current page with your only grid, or the grid you last used on that site (#15)
 
 ### Bug Fixes
 
