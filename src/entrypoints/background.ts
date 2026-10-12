@@ -1,12 +1,11 @@
 import type { Browser } from "wxt/browser";
 
+import { FillGridInTab } from "@/utils/fill";
 import {
   GRIDS_STORAGE_KEY,
   GetGridFromStorageByID,
   GetGridsFromStorage,
-  FillGridInTab,
 } from "@/utils/grids";
-import { isRuntimeMessage } from "@/utils/messages";
 
 const OnMenuClicked = async (
   info: Browser.contextMenus.OnClickData,
@@ -50,36 +49,9 @@ const CreateMenus = async () => {
   });
 };
 
-const ShowBasicNotification = ({
-  title,
-  message,
-}: {
-  title: string;
-  message: string;
-}) =>
-  browser.notifications.create({
-    type: "basic",
-    iconUrl: browser.runtime.getURL("/icons/48.png"),
-    title: browser.i18n.getMessage(
-      "Notifications_Title_NameWithPlaceholder",
-      title,
-    ),
-    message:
-      message + "\n\n" + browser.i18n.getMessage("Notifications_HelpMessage"),
-  });
-
 export default defineBackground(() => {
   browser.runtime.onInstalled.addListener(() => {
     CreateMenus();
-  });
-
-  browser.runtime.onMessage.addListener((message) => {
-    if (isRuntimeMessage(message)) {
-      switch (message.action) {
-        case "show-basic-notification":
-          return ShowBasicNotification(message.notification);
-      }
-    }
   });
 
   browser.storage.onChanged.addListener((changes, area) => {

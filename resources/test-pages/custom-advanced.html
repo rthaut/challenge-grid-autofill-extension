@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custom: challenge pattern and field selector</title>
+    <link rel="stylesheet" href="scenario.css" />
+    <script type="application/json" id="scenario">
+      {
+        "grid": "Custom 5x5.csv",
+        "type": "custom",
+        "config": {
+          "columns": { "keySet": "letters", "count": 5 },
+          "rows": { "keySet": "numbers-from-1", "count": 5 },
+          "cellLength": 3,
+          "challengePattern": "Challenge: ([A-E][1-5]) ([A-E][1-5]) ([A-E][1-5])",
+          "inputSelector": "input.grid-response"
+        },
+        "response": "JECQCBPAV"
+      }
+    </script>
+    <script type="module" src="scenario.js"></script>
+  </head>
+  <body>
+    <p><a href="./">All test pages</a></p>
+    <h1>Custom: challenge pattern and field selector</h1>
+    <div class="instructions">
+      <p>
+        Create a custom grid with 5 columns labeled with letters, 5 rows
+        numbered from 1, and 3 characters per cell. Under Advanced, set the
+        challenge pattern to
+        <code>Challenge: ([A-E][1-5]) ([A-E][1-5]) ([A-E][1-5])</code> and the
+        response field selector to <code>input.grid-response</code>. Import
+        <code>resources/test-grids/Custom 5x5.csv</code>, then autofill this
+        page and submit.
+      </p>
+      <p>
+        Expected: J E C Q C B P A V in the grid field, with the password field
+        and the reference number left alone
+      </p>
+    </div>
+    <p>Reference: A1</p>
+    <p class="challenge">Challenge: B2 C3 D4</p>
+    <form>
+      <p>
+        <label>Password <input type="password" name="password" /></label>
+      </p>
+      <p>
+        <label>
+          Grid response
+          <input
+            type="password"
+            class="grid-response"
+            name="response"
+            maxlength="9"
+            size="9"
+          />
+        </label>
+      </p>
+      <p>
+        <button type="submit">Submit</button>
+        <button type="reset">Reset</button>
+      </p>
+    </form>
+    <p id="result" role="status"></p>
+  </body>
+</html>

@@ -3,6 +3,7 @@ import * as React from "react";
 import { nanoid } from "nanoid";
 import { useMap, useTitle } from "react-use";
 
+import CustomGridSettings from "@/components/CustomGridSettings";
 import GridMatrixTable from "@/components/GridMatrixTable";
 import PageHeader from "@/components/PageHeader";
 
@@ -11,15 +12,19 @@ import useQueryParam from "@/hooks/useQueryParam";
 import useTheme from "@/hooks/useTheme";
 
 import {
+  type CustomGrid,
+  type CustomGridConfig,
   type Grid,
   type GridType,
-  GetEmptyGridMatrix,
+  DEFAULT_CUSTOM_GRID_CONFIG,
+  GetCustomGridConfigProblems,
+  GetGridConfig,
   GetMatrixFromText,
-  GRID_CONFIGS,
   GRID_TYPES,
   IsGridMatrixValid,
   IsGridTypeValid,
   IsGridValid,
+  ResizeGridMatrix,
 } from "@/utils/grids";
 
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutlined";
@@ -45,21 +50,54 @@ import Paper from "@mui/material/Paper";
 import Select from "@mui/material/Select";
 import Snackbar, { type SnackbarCloseReason } from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
+import Step from "@mui/material/Step";
+import StepButton from "@mui/material/StepButton";
+import StepContent from "@mui/material/StepContent";
+import Stepper from "@mui/material/Stepper";
 import { type Breakpoint, styled, ThemeProvider } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 
 const FILE_TYPES = [".csv", ".tsv", ".txt"];
 const SPACING = 2;
+
+const SETTINGS_STEP = 0;
+const VALUES_STEP = 1;
 
 const HiddenFileInput = styled("input")({
   display: "none",
 });
 
-const initialGrid: Omit<Grid, "type"> & { type: GridType | undefined } = {
+type EditableGrid = {
+  id: string;
+  title: string;
+  type: GridType | undefined;
+  matrix: string[][];
+  config?: CustomGridConfig;
+};
+
+const initialGrid: EditableGrid = {
   id: "",
   type: undefined,
   title: "",
   matrix: [[]],
+};
+
+/**
+ * Returns the grid configuration for the grid being edited, or `undefined` if it doesn't have a type or valid custom settings yet
+ */
+const GetEditableGridConfig = (grid: EditableGrid) => {
+  if (!IsGridTypeValid(grid.type)) {
+    return undefined;
+  }
+
+  if (grid.type === "custom") {
+    return GetCustomGridConfigProblems(grid.config).length === 0
+      ? GetGridConfig({ type: "custom", config: grid.config! })
+      : undefined;
+  }
+
+  return GetGridConfig({ type: grid.type });
 };
 
 export default function CreateEditGridApp() {
@@ -173,17 +211,23 @@ export default function CreateEditGridApp() {
   useTitle(pageTitle);
 
   const [isNewGrid, setIsNewGrid] = React.useState(true);
+  const [activeStep, setActiveStep] = React.useState(SETTINGS_STEP);
 
-  const [grids, setGrids] = useGridStore();
+  const [grids, setGrids, , storageError] = useGridStore();
 
   const [grid, { set: setGridProp, setAll: setAllGridProps }] =
-    useMap<Partial<Grid>>(initialGrid);
+    useMap<EditableGrid>(initialGrid);
+
+  const config = GetEditableGridConfig(grid);
+  const customGridProblems =
+    grid.type === "custom" ? GetCustomGridConfigProblems(grid.config) : [];
 
   React.useEffect(() => {
     if (id !== undefined && id !== null && id !== "") {
       const gridFromStorage = grids.find((g) => g.id === id);
       if (gridFromStorage !== undefined) {
         setIsNewGrid(false);
+        setActiveStep(VALUES_STEP);
         if (IsGridValid(gridFromStorage)) {
           setPageTitle(
             browser.i18n.getMessage(
@@ -197,7 +241,7 @@ export default function CreateEditGridApp() {
             ),
           );
         }
-        setAllGridProps(gridFromStorage);
+        setAllGridProps({ ...initialGrid, ...gridFromStorage } as EditableGrid);
       } else {
         // setPageTitle(browser.i18n.getMessage("ManageGrid_Title_CreateGrid"));
         // showSnackbarError(
@@ -210,18 +254,60 @@ export default function CreateEditGridApp() {
   React.useEffect(() => {
     if (isNewGrid) {
       setGridProp("id", nanoid());
-      setGridProp(
-        "matrix",
-        IsGridTypeValid(grid?.type) ? GetEmptyGridMatrix(grid.type) : [[]],
+    }
+  }, [isNewGrid]);
+
+  React.useEffect(() => {
+    if (storageError) {
+      showSnackbarError(
+        /quota/i.test(storageError)
+          ? browser.i18n.getMessage("ManageGrid_Error_StorageQuota")
+          : browser.i18n.getMessage(
+              "ManageGrid_Error_GenericWithPlaceholder",
+              storageError,
+            ),
       );
     }
-  }, [grid?.type, isNewGrid]);
+  }, [storageError]);
+
+  const setGridType = (type: GridType) => {
+    const gridConfig =
+      type === "custom" ? DEFAULT_CUSTOM_GRID_CONFIG : undefined;
+    setAllGridProps({
+      ...grid,
+      type,
+      config: gridConfig,
+      matrix: ResizeGridMatrix(
+        [],
+        GetGridConfig(
+          type === "custom"
+            ? { type, config: gridConfig! }
+            : { type: type as Exclude<GridType, "custom"> },
+        ),
+      ),
+    });
+  };
+
+  const setCustomGridConfig = (customConfig: CustomGridConfig) => {
+    const problems = GetCustomGridConfigProblems(customConfig);
+    setAllGridProps({
+      ...grid,
+      config: customConfig,
+      // keep the values that still fit; leave the grid alone until the new size is valid
+      matrix:
+        problems.includes("columns") || problems.includes("rows")
+          ? grid.matrix
+          : ResizeGridMatrix(
+              grid.matrix,
+              GetGridConfig({ type: "custom", config: customConfig }),
+            ),
+    });
+  };
 
   const setMatrixCell = (row: number, col: number, value: string) => {
-    let { matrix, type } = grid;
-    if (matrix === undefined) {
-      if (!IsGridTypeValid(type)) return;
-      matrix = GetEmptyGridMatrix(type);
+    const matrix = grid.matrix.map((cells) => [...cells]);
+    if (matrix[row] === undefined) {
+      return;
     }
     matrix[row]![col] = value;
     setGridProp("matrix", matrix);
@@ -236,9 +322,9 @@ export default function CreateEditGridApp() {
         try {
           const data = event?.target?.result?.toString();
           const matrix =
-            data === undefined
+            data === undefined || config === undefined
               ? undefined
-              : GetMatrixFromText(data, grid.type!);
+              : GetMatrixFromText(data, config);
           resolve(matrix);
         } catch (error) {
           console.error("Failed to parse file contents:", error);
@@ -257,7 +343,7 @@ export default function CreateEditGridApp() {
     resetSnackbar();
 
     const file = event?.target?.files?.[0];
-    if (!file) {
+    if (!file || config === undefined) {
       return;
     }
 
@@ -280,14 +366,11 @@ export default function CreateEditGridApp() {
     }
 
     try {
-      let csvMatrix = await getMatrixFromFile(file);
-      const matrix = GetEmptyGridMatrix(grid.type!).map((row, rowIndex) =>
-        row.map((col, colIndex) => csvMatrix?.[rowIndex]?.[colIndex] ?? ""),
-      );
+      const matrix = ResizeGridMatrix(await getMatrixFromFile(file), config);
 
       setGridProp("matrix", matrix);
 
-      if (!IsGridMatrixValid(grid.type!, matrix)) {
+      if (!IsGridMatrixValid(config, matrix)) {
         showSnackbarWarning(
           browser.i18n.getMessage("ManageGrid_Error_InvalidGridMatrix"),
         );
@@ -303,25 +386,29 @@ export default function CreateEditGridApp() {
   };
   // #endregion CSV File Import
 
+  const getGridToSave = (): Grid => {
+    const { id, title, type, matrix } = grid;
+    return type === "custom"
+      ? ({ id, title, type, matrix, config: grid.config! } as CustomGrid)
+      : ({ id, title, type, matrix } as Grid);
+  };
+
   const handleGridSave = () => {
+    const gridToSave = getGridToSave();
+
     if (isNewGrid) {
-      setGrids((grids) => [...grids, grid]);
+      setGrids((grids) => [...grids, gridToSave]);
       setIsNewGrid(false);
 
       showSnackbarSuccess(
         browser.i18n.getMessage("ManageGrid_Message_GridCreated"),
       );
 
-      history.replaceState({}, "", location.pathname + `?id=${grid.id}`);
+      history.replaceState({}, "", location.pathname + `?id=${gridToSave.id}`);
     } else {
-      setGrids((grids) => {
-        grids.splice(
-          grids.findIndex((g) => g.id === grid.id),
-          1,
-          grid,
-        );
-        return grids;
-      });
+      setGrids((grids) =>
+        grids.map((g) => (g.id === gridToSave.id ? gridToSave : g)),
+      );
 
       showSnackbarSuccess(
         browser.i18n.getMessage("ManageGrid_Message_GridUpdated"),
@@ -337,19 +424,30 @@ export default function CreateEditGridApp() {
 
   const getContainerMaxWidth = () => {
     let maxWidth: Breakpoint = "sm";
-    if (IsGridTypeValid(grid.type)) {
-      const cols = GRID_CONFIGS[grid.type]?.MATRIX_COLS.length;
-      if (cols > 30) {
+    if (config !== undefined) {
+      const width = config.MATRIX_COLS.length * config.MATRIX_CELL_LENGTH;
+      if (width > 30) {
         maxWidth = "xl";
-      } else if (cols > 20) {
+      } else if (width > 20) {
         maxWidth = "lg";
-      } else if (cols > 15) {
+      } else if (width > 15) {
         maxWidth = "md";
       }
     }
 
     return maxWidth;
   };
+
+  const settingsCaption =
+    grid.type === undefined
+      ? browser.i18n.getMessage(
+          "ManageGrid_StepLabel_Caption_GridTypeNotSelected",
+        )
+      : customGridProblems.length > 0
+        ? browser.i18n.getMessage(
+            "ManageGrid_StepLabel_Error_CustomGridSettings",
+          )
+        : browser.i18n.getMessage(`GridType_Title_${grid.type}`);
 
   return (
     <ThemeProvider theme={theme}>
@@ -363,110 +461,157 @@ export default function CreateEditGridApp() {
             autoComplete="off"
             sx={{ m: SPACING }}
           >
-            <Stack
-              direction="column"
-              spacing={SPACING}
-              sx={{
-                justifyContent: "flex-start",
-                alignItems: "stretch",
-                pb: SPACING,
-              }}
-            >
-              {isNewGrid && (
-                <FormControl fullWidth size="small">
-                  <InputLabel>
-                    {browser.i18n.getMessage("ManageGrid_LabelText_GridType")}
-                  </InputLabel>
-                  <Select
-                    label={browser.i18n.getMessage(
-                      "ManageGrid_LabelText_GridType",
-                    )}
-                    required
-                    value={grid.type ?? ""}
-                    onChange={(event) =>
-                      setGridProp("type", event.target.value as GridType)
-                    }
-                  >
-                    {GRID_TYPES.map((type) => (
-                      <MenuItem key={type} value={type}>
-                        {browser.i18n.getMessage(`GridType_Title_${type}`)}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
-              {IsGridTypeValid(grid.type) && (
-                <>
-                  <label htmlFor="csv-file-input">
-                    <HiddenFileInput
-                      accept={FILE_TYPES.join()}
-                      id="csv-file-input"
-                      type="file"
-                      onChange={handleFileChange}
-                    />
-                    <Button
-                      variant="outlined"
-                      component="span"
-                      fullWidth
-                      startIcon={<UploadFileIcon />}
+            <Stepper nonLinear activeStep={activeStep} orientation="vertical">
+              <Step>
+                <StepButton
+                  onClick={() => setActiveStep(SETTINGS_STEP)}
+                  optional={
+                    <Typography
+                      variant="caption"
+                      color={
+                        customGridProblems.length > 0
+                          ? "error"
+                          : "textSecondary"
+                      }
                     >
-                      {browser.i18n.getMessage(
-                        "ManageGrid_ButtonText_ImportCSV",
-                      )}
-                    </Button>
-                  </label>
-                  <TextField
-                    label={browser.i18n.getMessage(
-                      "ManageGrid_LabelText_GridTitle",
-                    )}
-                    size="small"
-                    required
-                    value={grid.title ?? ""}
-                    onChange={(event) =>
-                      setGridProp("title", event.target.value)
-                    }
-                  />
-                  <Divider />
-                  <GridMatrixTable
-                    type={grid.type}
-                    matrix={grid.matrix}
-                    setMatrixCell={setMatrixCell}
-                  />
-                  <Divider />
-                </>
-              )}
-              <Stack
-                direction="row"
-                spacing={SPACING}
-                sx={{ justifyContent: "center", alignItems: "center" }}
-              >
-                {!isNewGrid && (
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    fullWidth
-                    startIcon={<DeleteIcon />}
-                    onClick={openConfirmDeleteDialog}
-                  >
-                    {browser.i18n.getMessage(
-                      "ManageGrid_ButtonText_DeleteGrid",
-                    )}
-                  </Button>
-                )}
-                <Button
-                  variant="contained"
-                  fullWidth
-                  startIcon={<CheckCircleOutlineIcon />}
-                  disabled={!IsGridValid(grid)}
-                  onClick={handleGridSave}
+                      {settingsCaption}
+                    </Typography>
+                  }
                 >
-                  {browser.i18n.getMessage(
-                    isNewGrid
-                      ? "ManageGrid_ButtonText_CreateGrid"
-                      : "ManageGrid_ButtonText_UpdateGrid",
+                  {browser.i18n.getMessage("ManageGrid_StepLabel_GridSettings")}
+                </StepButton>
+                <StepContent>
+                  <Stack direction="column" spacing={SPACING} sx={{ py: 1 }}>
+                    {isNewGrid && (
+                      <FormControl fullWidth size="small">
+                        <InputLabel>
+                          {browser.i18n.getMessage(
+                            "ManageGrid_LabelText_GridType",
+                          )}
+                        </InputLabel>
+                        <Select
+                          label={browser.i18n.getMessage(
+                            "ManageGrid_LabelText_GridType",
+                          )}
+                          required
+                          value={grid.type ?? ""}
+                          onChange={(event) =>
+                            setGridType(event.target.value as GridType)
+                          }
+                        >
+                          {GRID_TYPES.map((type) => (
+                            <MenuItem key={type} value={type}>
+                              {browser.i18n.getMessage(
+                                `GridType_Title_${type}`,
+                              )}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    )}
+                    {grid.type === "custom" && grid.config && (
+                      <CustomGridSettings
+                        config={grid.config}
+                        problems={customGridProblems}
+                        onChange={setCustomGridConfig}
+                      />
+                    )}
+                    <Box>
+                      <Button
+                        variant="contained"
+                        disabled={config === undefined}
+                        onClick={() => setActiveStep(VALUES_STEP)}
+                      >
+                        {browser.i18n.getMessage("ManageGrid_ButtonText_Next")}
+                      </Button>
+                    </Box>
+                  </Stack>
+                </StepContent>
+              </Step>
+              <Step disabled={config === undefined}>
+                <StepButton onClick={() => setActiveStep(VALUES_STEP)}>
+                  {browser.i18n.getMessage("ManageGrid_StepLabel_GridValues")}
+                </StepButton>
+                <StepContent>
+                  {config !== undefined && (
+                    <Stack direction="column" spacing={SPACING} sx={{ py: 1 }}>
+                      <label htmlFor="csv-file-input">
+                        <HiddenFileInput
+                          accept={FILE_TYPES.join()}
+                          id="csv-file-input"
+                          type="file"
+                          onChange={handleFileChange}
+                        />
+                        <Button
+                          variant="outlined"
+                          component="span"
+                          fullWidth
+                          startIcon={<UploadFileIcon />}
+                        >
+                          {browser.i18n.getMessage(
+                            "ManageGrid_ButtonText_ImportCSV",
+                          )}
+                        </Button>
+                      </label>
+                      <TextField
+                        label={browser.i18n.getMessage(
+                          "ManageGrid_LabelText_GridTitle",
+                        )}
+                        size="small"
+                        required
+                        value={grid.title ?? ""}
+                        onChange={(event) =>
+                          setGridProp("title", event.target.value)
+                        }
+                      />
+                      <Divider />
+                      <GridMatrixTable
+                        config={config}
+                        matrix={grid.matrix}
+                        setMatrixCell={setMatrixCell}
+                      />
+                      <Divider />
+                      <Box>
+                        <Button onClick={() => setActiveStep(SETTINGS_STEP)}>
+                          {browser.i18n.getMessage(
+                            "ManageGrid_ButtonText_Back",
+                          )}
+                        </Button>
+                      </Box>
+                    </Stack>
                   )}
+                </StepContent>
+              </Step>
+            </Stepper>
+            <Stack
+              direction="row"
+              spacing={SPACING}
+              sx={{ justifyContent: "center", alignItems: "center", mt: 2 }}
+            >
+              {!isNewGrid && (
+                <Button
+                  variant="outlined"
+                  color="error"
+                  fullWidth
+                  startIcon={<DeleteIcon />}
+                  onClick={openConfirmDeleteDialog}
+                >
+                  {browser.i18n.getMessage("ManageGrid_ButtonText_DeleteGrid")}
                 </Button>
-              </Stack>
+              )}
+              <Button
+                variant="contained"
+                fullWidth
+                startIcon={<CheckCircleOutlineIcon />}
+                disabled={!IsGridValid(getGridToSave())}
+                onClick={handleGridSave}
+              >
+                {browser.i18n.getMessage(
+                  isNewGrid
+                    ? "ManageGrid_ButtonText_CreateGrid"
+                    : "ManageGrid_ButtonText_UpdateGrid",
+                )}
+              </Button>
             </Stack>
           </Box>
         </Container>

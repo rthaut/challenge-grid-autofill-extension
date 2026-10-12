@@ -15,6 +15,7 @@
 ### Features
 
 * Parses challenge prompts and automatically enters the corresponding response for the selected grid from a context menu and/or the browser action menu
+* Supports Entrust and Deepnet grids, plus custom grids with your own size, labels and number of characters per cell
 * Store multiple grids directly in your browser and sync them across multiple devices
 * Quickly import grids from CSV files and/or use the built-in grid editor
 * Optionally automatically submit the challenge form after entering a response

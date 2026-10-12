@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Enhancements
+
+- Add custom grids, with your own columns, rows, labels and characters per cell (#10)
+
+### Bug Fixes
+
+- Show one notification when a page with frames can't be filled, instead of one per frame
+- Fill the page only once when autofilling it again without reloading
+
 ### Other
 
 - Require Chrome or Edge 117 or later, or Firefox 121 or later
