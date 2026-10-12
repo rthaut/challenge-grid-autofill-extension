@@ -42,6 +42,22 @@ export const GetChallengeFromText = (text: string, patterns: RegExp[]) => {
 };
 
 /**
+ * Sets the `value` of the `input` the way typing does, so sites that track the value through events see it
+ * @param {HTMLInputElement} input the input field
+ * @param {string} value the value
+ */
+const SetInputValue = (input: HTMLInputElement, value: string) => {
+  input.setAttribute("value", value);
+  // use the setter on the prototype, since frameworks like React replace the setter on each input to track its value
+  Object.getOwnPropertyDescriptor(
+    HTMLInputElement.prototype,
+    "value",
+  )!.set!.call(input, value);
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+  input.dispatchEvent(new Event("change", { bubbles: true }));
+};
+
+/**
  * Fills the `response` (one value per challenge cell) into the `inputs`: all of it into a single input,
  * one cell per input, or one character per input
  * @param {HTMLInputElement[]} inputs the response input fields
@@ -67,8 +83,7 @@ export const FillResponseInputs = (
   }
 
   inputs.forEach((input, i) => {
-    input.setAttribute("value", values[i]!);
-    input.value = values[i]!;
+    SetInputValue(input, values[i]!);
   });
 
   return true;

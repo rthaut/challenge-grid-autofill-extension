@@ -91,7 +91,7 @@ The pages in `resources/test-pages` are test scenarios for each grid type, with 
 npx serve resources/test-pages
 ```
 
-Each page says which grid to import and what to expect, and shows whether the fields are right when you submit the form (or when the extension auto-submits it).
+Each page says which grid to import and what to expect, and shows whether the response is right when you submit the form (or when the extension auto-submits it). The pages under "Sites that track field values" check that sites built with React and similar frameworks see the response, not just the fields.
 
 [chrome-url]: https://chrome.google.com/webstore/detail/challenge-grid-autofill/nifoiollkgakfnbefnepgonkmhijehhl
 [chrome-image-version]: https://img.shields.io/chrome-web-store/v/nifoiollkgakfnbefnepgonkmhijehhl?logo=googlechrome&style=for-the-badge

@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Show one notification when a page with frames can't be filled, instead of one per frame
 - Fill the page only once when autofilling it again without reloading
+- Fill the response so sites built with React and similar frameworks see it, and auto-submit the way clicking the submit button does (#67)
 
 ### Other
 

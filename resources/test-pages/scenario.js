@@ -1,10 +1,10 @@
 // Checks the response fields of a test page against the expected response in
-// its `#scenario` JSON. A `response` of null means the extension should leave
-// the fields empty (and show an error notification instead).
+// its `#scenario` JSON when the form is submitted (by hand, or by the
+// extension's auto-submit). A `response` of null means the extension should
+// leave the fields empty (and show an error notification instead).
 //
-// The extension's auto-submit calls `form.submit()`, which skips the submit
-// event and reloads the page with the field values in the query string, so the
-// values are checked from there on load as well.
+// A page that keeps its own copy of the field values, like a React app, sets
+// `window.getScenarioValues` so the check uses the values the page saw.
 
 const scenario = JSON.parse(document.getElementById("scenario").textContent);
 const form = document.querySelector("form");
@@ -15,35 +15,23 @@ const result = document.getElementById("result");
 // spaced out so the text can't be mistaken for a challenge (like "A1")
 const spaced = (value) => value.split("").join(" ");
 
-const check = (values, how) => {
+const check = (values) => {
   const actual = values.join("");
   const passed =
     scenario.response === null ? actual === "" : actual === scenario.response;
 
   result.className = passed ? "pass" : "fail";
-  result.textContent = `${passed ? "Pass" : "Fail"} (${how}): ${
+  result.textContent = `${passed ? "Pass" : "Fail"}: ${
     actual === "" ? "the fields are empty" : `got ${spaced(actual)}`
   }`;
 };
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  check(
-    inputs.map((input) => input.value),
-    "submitted",
-  );
+  check(window.getScenarioValues?.() ?? inputs.map((input) => input.value));
 });
 
 form.addEventListener("reset", () => {
   result.className = "";
   result.textContent = "";
-  history.replaceState(null, "", location.pathname);
 });
-
-const params = new URLSearchParams(location.search);
-if (inputs.some((input) => params.has(input.name))) {
-  check(
-    inputs.map((input) => params.get(input.name) ?? ""),
-    "auto-submitted",
-  );
-}
