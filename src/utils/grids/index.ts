@@ -102,6 +102,25 @@ export const FillGridInTab = async (tabId: number, grid: Grid) => {
 };
 
 /**
+ * Returns the matrix from the text of a CSV/TSV file, keeping only as many rows (from the end) and columns (from the start) as the grid `type` has
+ * @param {string} text the file contents
+ * @param {string} type the type of grid
+ * @returns {string[][]} the matrix, which is smaller than the grid when the file is
+ */
+export const GetMatrixFromText = (text: string, type: GridType) =>
+  text
+    .replace(/\r?\n$/, "")
+    .split(/\r?\n/)
+    .slice(GRID_CONFIGS[type]?.MATRIX_ROWS.length * -1) // take last # rows (dirty way to skip optional column headers)
+    .map(
+      (row) =>
+        row
+          .split(/,|\t/)
+          .map((cell) => cell.replace(/\"|\'/g, "").trim())
+          .slice(0, GRID_CONFIGS[type]?.MATRIX_COLS.length), // take first # columns
+    );
+
+/**
  * Returns an empty matrix for the supplied grid `type`
  * @param {string} type the type of grid
  * @returns {string[][]} the empty matrix

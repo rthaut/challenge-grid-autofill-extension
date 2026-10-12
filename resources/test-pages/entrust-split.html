@@ -1,13 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Entrust eGrid Test Page - Split Fields</title>
+    <title>Entrust: one field per character</title>
+    <link rel="stylesheet" href="scenario.css" />
+    <script type="application/json" id="scenario">
+      { "grid": "Entrust.csv", "type": "entrust", "response": "H9Z" }
+    </script>
+    <script type="module" src="scenario.js"></script>
   </head>
   <body>
-    <p>Challenge prompt: [A1] [B2] [C3]</p>
+    <p><a href="./">All test pages</a></p>
+    <h1>Entrust: one field per character</h1>
+    <div class="instructions">
+      <p>
+        Import <code>resources/test-grids/Entrust.csv</code> as an Entrust grid,
+        then autofill this page and submit.
+      </p>
+      <p>Expected: H 9 Z, one character per field</p>
+    </div>
+    <p class="challenge">Challenge prompt: [A1] [J10] [C3]</p>
     <form>
       <p>
         <input type="password" name="response1" maxlength="1" size="1" />
@@ -16,7 +29,9 @@
       </p>
       <p>
         <button type="submit">Submit</button>
+        <button type="reset">Reset</button>
       </p>
     </form>
+    <p id="result" role="status"></p>
   </body>
 </html>

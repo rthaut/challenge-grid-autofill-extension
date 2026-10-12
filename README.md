@@ -75,6 +75,22 @@ npm run start:firefox
 
 Use `build:chrome` and `start:chrome` for Chrome. Use <kbd>CTRL</kbd> + <kbd>c</kbd> to stop the browser process in your terminal.
 
+### Testing
+
+`npm test` runs the linter, the unit tests and `web-ext lint`. To run just the unit tests:
+
+```sh
+npm run test:unit
+```
+
+The pages in `resources/test-pages` are test scenarios for each grid type, with matching grids to import in `resources/test-grids`. The unit tests autofill each page, and you can also try them in a browser:
+
+```sh
+npx serve resources/test-pages
+```
+
+Each page says which grid to import and what to expect, and shows whether the fields are right when you submit the form (or when the extension auto-submits it).
+
 [chrome-url]: https://chrome.google.com/webstore/detail/challenge-grid-autofill/nifoiollkgakfnbefnepgonkmhijehhl
 [chrome-image-version]: https://img.shields.io/chrome-web-store/v/nifoiollkgakfnbefnepgonkmhijehhl?logo=googlechrome&style=for-the-badge
 [chrome-image-users]: https://img.shields.io/chrome-web-store/d/nifoiollkgakfnbefnepgonkmhijehhl?logo=googlechrome&style=for-the-badge
