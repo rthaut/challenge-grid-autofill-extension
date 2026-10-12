@@ -1,12 +1,13 @@
 import type { Browser } from "wxt/browser";
 
+import { FillGridInTab, FillGridWithShortcut } from "@/utils/fill";
 import {
   GRIDS_STORAGE_KEY,
   GetGridFromStorageByID,
   GetGridsFromStorage,
-  FillGridInTab,
 } from "@/utils/grids";
-import { isRuntimeMessage } from "@/utils/messages";
+import { ShowBasicNotification } from "@/utils/notifications";
+import { AUTOFILL_COMMAND } from "@/utils/shortcut";
 
 const OnMenuClicked = async (
   info: Browser.contextMenus.OnClickData,
@@ -16,9 +17,13 @@ const OnMenuClicked = async (
     return;
   }
 
-  const grid = await GetGridFromStorageByID(info.menuItemId.toString());
+  const gridId = info.menuItemId.toString();
+  const grid = await GetGridFromStorageByID(gridId);
   if (!grid) {
-    return;
+    return ShowBasicNotification(
+      browser.i18n.getMessage("Notifications_Title_InvalidGrid"),
+      browser.i18n.getMessage("Notifications_Message_InvalidGrid", gridId),
+    );
   }
 
   await FillGridInTab(tab.id, grid);
@@ -50,35 +55,26 @@ const CreateMenus = async () => {
   });
 };
 
-const ShowBasicNotification = ({
-  title,
-  message,
-}: {
-  title: string;
-  message: string;
-}) =>
-  browser.notifications.create({
-    type: "basic",
-    iconUrl: browser.runtime.getURL("/icons/48.png"),
-    title: browser.i18n.getMessage(
-      "Notifications_Title_NameWithPlaceholder",
-      title,
-    ),
-    message:
-      message + "\n\n" + browser.i18n.getMessage("Notifications_HelpMessage"),
-  });
+const OnAutofillCommand = async (tab: Browser.tabs.Tab | undefined) => {
+  const target =
+    tab?.id !== undefined
+      ? tab
+      : (await browser.tabs.query({ active: true, currentWindow: true }))[0];
+  if (target?.id === undefined) {
+    return;
+  }
+
+  await FillGridWithShortcut({ id: target.id, url: target.url });
+};
 
 export default defineBackground(() => {
   browser.runtime.onInstalled.addListener(() => {
     CreateMenus();
   });
 
-  browser.runtime.onMessage.addListener((message) => {
-    if (isRuntimeMessage(message)) {
-      switch (message.action) {
-        case "show-basic-notification":
-          return ShowBasicNotification(message.notification);
-      }
+  browser.commands.onCommand.addListener((command, tab) => {
+    if (command === AUTOFILL_COMMAND) {
+      OnAutofillCommand(tab);
     }
   });
 

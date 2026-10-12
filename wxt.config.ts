@@ -5,6 +5,12 @@ export default defineConfig({
   srcDir: "src",
   publicDir: "src/public",
   modules: ["@wxt-dev/webextension-polyfill", "@wxt-dev/module-react"],
+  zip: {
+    // the sources zip is for Firefox add-on review, so it must build as-is:
+    // .npmrc sets legacy-peer-deps, without which `npm ci` fails
+    includeSources: ["**/*", ".npmrc"],
+    excludeSources: ["promo/**"],
+  },
   hooks: {
     "build:manifestGenerated": (wxt, manifest) => {
       if (manifest.options_ui?.page !== undefined) {
@@ -42,7 +48,7 @@ export default defineConfig({
             browser_specific_settings: {
               gecko: {
                 id: "challenge-grid-autofill@ryan.thaut.me",
-                strict_min_version: "109.0",
+                strict_min_version: "121.0",
                 // the extension does not collect or transmit any user data
                 // https://extensionworkshop.com/documentation/develop/firefox-builtin-data-consent/
                 data_collection_permissions: {
@@ -76,7 +82,18 @@ export default defineConfig({
         "scripting",
         "storage",
       ],
-      minimum_chrome_version: browser === "chrome" ? "90" : "91",
+      commands: {
+        // keep the name in sync with AUTOFILL_COMMAND in src/utils/shortcut.ts
+        "autofill-grid": {
+          suggested_key: { default: "Alt+Shift+G", mac: "MacCtrl+Shift+G" },
+          description: "__MSG_Command_AutofillGrid__",
+        },
+        // opens the popup; no default key, but users can assign one
+        _execute_action: {
+          description: "__MSG_Command_OpenPopup__",
+        },
+      },
+      minimum_chrome_version: "117",
       ...firefox_settings,
     } satisfies UserManifest;
   },

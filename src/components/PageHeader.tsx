@@ -10,10 +10,8 @@ export default function PageHeader({ title }: { title: string }) {
       <Toolbar disableGutters variant="dense">
         <Stack
           direction="row"
-          justifyContent="center"
-          alignItems="center"
           spacing={2}
-          width="100%"
+          sx={{ justifyContent: "center", alignItems: "center", width: "100%" }}
         >
           <Typography variant="h6" align="center" sx={{ width: "100%" }}>
             {title}

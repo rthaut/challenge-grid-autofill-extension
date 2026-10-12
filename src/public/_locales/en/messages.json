@@ -15,14 +15,35 @@
     "message": "Challenge Grid Autofill",
     "description": "The title of the browser action button"
   },
+  "Command_AutofillGrid": {
+    "message": "Autofill the grid on the current page"
+  },
+  "Command_OpenPopup": {
+    "message": "Open the list of grids"
+  },
   "GridType_Title_Deepnet": {
     "message": "Deepnet GridID"
   },
   "GridType_Title_Entrust": {
     "message": "Entrust eGrid"
   },
+  "GridType_Title_Custom": {
+    "message": "Custom Grid"
+  },
+  "GridKeySet_Title_Letters": {
+    "message": "Letters (A, B, C, …)"
+  },
+  "GridKeySet_Title_NumbersFrom0": {
+    "message": "Numbers from 0 (0, 1, 2, …)"
+  },
+  "GridKeySet_Title_NumbersFrom1": {
+    "message": "Numbers from 1 (1, 2, 3, …)"
+  },
   "Popup_CreateGrid_Text": {
     "message": "Add a New Grid"
+  },
+  "Popup_ChooseGridForShortcut_Text": {
+    "message": "Select a grid to fill this page. The shortcut will remember your choice for this site."
   },
   "Popup_Options_Text": {
     "message": "Options"
@@ -39,11 +60,69 @@
   "ManageGrid_ButtonText_UpdateGrid": {
     "message": "Update Grid"
   },
+  "ManageGrid_ButtonText_Next": {
+    "message": "Next"
+  },
+  "ManageGrid_ButtonText_Back": {
+    "message": "Back"
+  },
   "ManageGrid_LabelText_GridType": {
     "message": "Grid Type"
   },
   "ManageGrid_LabelText_GridTitle": {
     "message": "Grid Title"
+  },
+  "ManageGrid_StepLabel_GridSettings": {
+    "message": "Grid Settings"
+  },
+  "ManageGrid_StepLabel_GridValues": {
+    "message": "Grid Values"
+  },
+  "ManageGrid_StepLabel_Caption_GridTypeNotSelected": {
+    "message": "Choose a grid type"
+  },
+  "ManageGrid_StepLabel_Error_CustomGridSettings": {
+    "message": "Some settings need to be fixed"
+  },
+  "ManageGrid_LabelText_Columns": {
+    "message": "Columns"
+  },
+  "ManageGrid_LabelText_Rows": {
+    "message": "Rows"
+  },
+  "ManageGrid_LabelText_ColumnKeys": {
+    "message": "Column Labels"
+  },
+  "ManageGrid_LabelText_RowKeys": {
+    "message": "Row Labels"
+  },
+  "ManageGrid_LabelText_CellLength": {
+    "message": "Characters per Cell"
+  },
+  "ManageGrid_LabelText_Advanced": {
+    "message": "Advanced"
+  },
+  "ManageGrid_LabelText_ChallengePattern": {
+    "message": "Challenge Pattern"
+  },
+  "ManageGrid_HelperText_ChallengePatternWithPlaceholder": {
+    "message": "A regular expression that matches one challenge cell. Leave it empty to match cells like $EXAMPLE$.",
+    "placeholders": {
+      "example": {
+        "content": "$1"
+      }
+    }
+  },
+  "ManageGrid_LabelText_InputSelector": {
+    "message": "Response Field Selector"
+  },
+  "ManageGrid_HelperText_InputSelectorWithPlaceholder": {
+    "message": "A CSS selector for the response field(s). Leave it empty to use $DEFAULT$.",
+    "placeholders": {
+      "default": {
+        "content": "$1"
+      }
+    }
   },
   "ManageGrid_Title_CreateGrid": {
     "message": "Create a New Grid"
@@ -86,6 +165,26 @@
         "content": "$1"
       }
     }
+  },
+  "ManageGrid_Error_CustomGrid_CountWithPlaceholder": {
+    "message": "Enter a number from 1 to $MAX$",
+    "placeholders": {
+      "max": {
+        "content": "$1"
+      }
+    }
+  },
+  "ManageGrid_Error_CustomGrid_KeySets": {
+    "message": "Use letters for either the columns or the rows, and numbers for the other"
+  },
+  "ManageGrid_Error_CustomGrid_ChallengePattern": {
+    "message": "Enter a valid regular expression that doesn't match an empty string"
+  },
+  "ManageGrid_Error_CustomGrid_InputSelector": {
+    "message": "Enter a valid CSS selector"
+  },
+  "ManageGrid_Error_StorageQuota": {
+    "message": "The grid couldn't be saved because the browser's sync storage is full. Delete another grid, or make this one smaller, and try again."
   },
   "ManageGrid_Message_GridCreated": {
     "message": "Grid created successfully. You may now close this window or make additional changes."
@@ -168,6 +267,43 @@
       }
     }
   },
+  "Notifications_Title_NoGrids": {
+    "message": "No Grids"
+  },
+  "Notifications_Message_NoGrids": {
+    "message": "Add a grid from the toolbar button first, then use the shortcut again."
+  },
+  "Notifications_Title_ChooseGrid": {
+    "message": "Choose a Grid"
+  },
+  "Notifications_Message_ChooseGrid": {
+    "message": "You have more than one grid. Autofill this page once from the toolbar button or the right-click menu, and the shortcut will use the same grid on this site from then on."
+  },
+  "Notifications_Title_ShortcutGrid": {
+    "message": "Autofilled"
+  },
+  "Notifications_Message_ShortcutGridWithPlaceholder": {
+    "message": "Filled the response from your \"$TITLE$\" grid. You can turn off this message in the extension's options.",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "Notifications_Message_ShortcutGridFailedWithPlaceholder": {
+    "message": "The shortcut used your \"$TITLE$\" grid. To use a different grid on this site, autofill it once from the toolbar button or the right-click menu.",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "Notifications_Title_CantAccessPage": {
+    "message": "Can't Autofill This Page"
+  },
+  "Notifications_Message_CantAccessPage": {
+    "message": "The browser doesn't let extensions run on this page. Browser pages and extension stores are always blocked. For a file on your computer, allow the extension to access file URLs in its settings."
+  },
   "Notifications_HelpMessage": {
     "message": "Please contact the extension author if this problem persists."
   },
@@ -177,11 +313,32 @@
   "Options_SettingDescription_AutoSubmitForm": {
     "message": "Enable to automatically submit the challenge form after entering the response"
   },
+  "Options_SettingLabel_NotifyShortcutGrid": {
+    "message": "Show Which Grid the Shortcut Used"
+  },
+  "Options_SettingDescription_NotifyShortcutGrid": {
+    "message": "Enable to show a notification naming the grid used by the autofill shortcut (only when multiple grids are available)"
+  },
   "Options_SettingLabel_ForceDarkMode": {
     "message": "Force Dark Mode"
   },
   "Options_SettingDescription_ForceDarkMode": {
     "message": "Enable to force this extension to use dark mode (regardless of your system preferences)"
+  },
+  "Options_ShortcutLabel": {
+    "message": "Autofill Shortcut"
+  },
+  "Options_ShortcutDescription": {
+    "message": "Attempts to automatically fill the grid on the current page"
+  },
+  "Options_ShortcutNotSet": {
+    "message": "Not set"
+  },
+  "Options_ShortcutButtonText": {
+    "message": "Change Shortcut"
+  },
+  "Options_ShortcutFirefoxHelp": {
+    "message": "To change it, open Add-ons and Themes, click the gear button, and choose Manage Extension Shortcuts."
   },
   "Options_BugEnhancement_QuestionText": {
     "message": "Found a bug? Have an idea for an enhancement?"

@@ -15,8 +15,10 @@
 ### Features
 
 * Parses challenge prompts and automatically enters the corresponding response for the selected grid from a context menu and/or the browser action menu
+* Supports Entrust and Deepnet grids, plus custom grids with your own size, labels and number of characters per cell
 * Store multiple grids directly in your browser and sync them across multiple devices
 * Quickly import grids from CSV files and/or use the built-in grid editor
+* Autofill with a keyboard shortcut (<kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd> by default), which uses your only grid or the grid you last used on that site, and tells you which grid it used when you have more than one (you can turn this off in the options). If it can't tell which grid to use, it opens the toolbar menu so you can choose where the browser allows it (like Chrome and Edge 127 or later); otherwise a notification explains how
 * Optionally automatically submit the challenge form after entering a response
 * Optionally force the UI elements of this extension to use Dark Mode
 
@@ -74,6 +76,22 @@ npm run start:firefox
 ```
 
 Use `build:chrome` and `start:chrome` for Chrome. Use <kbd>CTRL</kbd> + <kbd>c</kbd> to stop the browser process in your terminal.
+
+### Testing
+
+`npm test` runs the linter, the unit tests and `web-ext lint`. To run just the unit tests:
+
+```sh
+npm run test:unit
+```
+
+The pages in `resources/test-pages` are test scenarios for each grid type, with matching grids to import in `resources/test-grids`. The unit tests autofill each page, and you can also try them in a browser:
+
+```sh
+npx serve resources/test-pages
+```
+
+Each page says which grid to import and what to expect, and shows whether the response is right when you submit the form (or when the extension auto-submits it). The pages under "Sites that track field values" check that sites built with React and similar frameworks see the response, not just the fields.
 
 [chrome-url]: https://chrome.google.com/webstore/detail/challenge-grid-autofill/nifoiollkgakfnbefnepgonkmhijehhl
 [chrome-image-version]: https://img.shields.io/chrome-web-store/v/nifoiollkgakfnbefnepgonkmhijehhl?logo=googlechrome&style=for-the-badge

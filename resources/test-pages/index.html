@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Challenge Grid Autofill test pages</title>
+    <link rel="stylesheet" href="scenario.css" />
+  </head>
+  <body>
+    <h1>Challenge Grid Autofill test pages</h1>
+    <p>
+      Serve this folder with <code>npx serve resources/test-pages</code> so the
+      extension can inject into the pages without file URL access. Each page
+      says which grid from <code>resources/test-grids</code> to import and what
+      to expect, and checks the response when you submit (or when the extension
+      auto-submits).
+    </p>
+    <p>
+      The pages also run as automated tests: <code>npm run test:unit</code>.
+    </p>
+    <h2>Entrust</h2>
+    <ul>
+      <li><a href="entrust-single.html">One field</a></li>
+      <li><a href="entrust-split.html">One field per character</a></li>
+      <li><a href="entrust-mismatched.html">More cells than fields</a></li>
+      <li>
+        <a href="entrust-frame.html">Challenge in a frame</a> (manual only)
+      </li>
+    </ul>
+    <h2>Sites that track field values</h2>
+    <ul>
+      <li>
+        <a href="tracked-entrust-split.html">Fields tracked like React</a>
+      </li>
+      <li>
+        <a href="react-single.html">React form</a> (manual only, needs internet
+        access)
+      </li>
+    </ul>
+    <h2>Deepnet</h2>
+    <ul>
+      <li><a href="deepnet-single.html">One field</a></li>
+    </ul>
+    <h2>Custom</h2>
+    <ul>
+      <li><a href="custom-split.html">One field per cell</a></li>
+      <li>
+        <a href="custom-advanced.html">Challenge pattern and field selector</a>
+      </li>
+    </ul>
+  </body>
+</html>
