@@ -5,6 +5,12 @@ export const AUTOFILL_COMMAND = "autofill-grid";
 // remembers the grid last filled on each site, in local storage (it's per device and not worth syncing)
 export const LAST_GRID_BY_SITE_STORAGE_KEY = "lastGridBySite";
 
+// when the shortcut opened the toolbar popup to choose a grid, in session storage so the popup can say why it opened
+export const CHOOSE_GRID_REQUEST_STORAGE_KEY = "chooseGridRequestedAt";
+
+// how long the request is valid, so a later popup opened from the toolbar doesn't show it
+const CHOOSE_GRID_REQUEST_MAX_AGE_MS = 10_000;
+
 export type ShortcutGridChoice =
   // `fromSeveral` is whether the grid was chosen from more than one valid grid
   | { status: "chosen"; grid: Grid; fromSeveral: boolean }
@@ -96,4 +102,39 @@ export const RememberGridForUrl = async (
       [LAST_GRID_BY_SITE_STORAGE_KEY]: { ...lastGridBySite, [site]: gridId },
     });
   }
+};
+
+/**
+ * Opens the toolbar popup so the user can choose a grid for the shortcut, where the browser allows it
+ * (Chrome and Edge 127 or later; some Firefox versions only allow it while handling the shortcut itself, before any `await`)
+ * @returns {Promise<boolean>} whether the popup opened
+ */
+export const OpenPopupToChooseGrid = async () => {
+  await browser.storage.session.set({
+    [CHOOSE_GRID_REQUEST_STORAGE_KEY]: Date.now(),
+  });
+
+  try {
+    await browser.action.openPopup();
+    return true;
+  } catch (error) {
+    console.info("Couldn't open the popup to choose a grid:", error);
+    await browser.storage.session.remove(CHOOSE_GRID_REQUEST_STORAGE_KEY);
+    return false;
+  }
+};
+
+/**
+ * Returns whether the shortcut just opened the popup to choose a grid, and clears the request so it's only shown once
+ * @returns {Promise<boolean>} whether the popup was opened to choose a grid
+ */
+export const TakeChooseGridRequest = async () => {
+  const { [CHOOSE_GRID_REQUEST_STORAGE_KEY]: requestedAt } =
+    await browser.storage.session.get(CHOOSE_GRID_REQUEST_STORAGE_KEY);
+  if (typeof requestedAt !== "number") {
+    return false;
+  }
+
+  await browser.storage.session.remove(CHOOSE_GRID_REQUEST_STORAGE_KEY);
+  return Date.now() - requestedAt < CHOOSE_GRID_REQUEST_MAX_AGE_MS;
 };

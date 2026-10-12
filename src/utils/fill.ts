@@ -5,6 +5,7 @@ import { GetSetting } from "@/utils/settings";
 import {
   ChooseGridForShortcut,
   GetRememberedGridIdForUrl,
+  OpenPopupToChooseGrid,
   RememberGridForUrl,
 } from "@/utils/shortcut";
 
@@ -206,7 +207,8 @@ export const FillGridInActiveTab = async (grid: Grid) => {
 
 /**
  * Autofills the tab for the keyboard shortcut, with the only grid or the grid last filled on the tab's site,
- * and shows a notification when there's no grid to use, or (if enabled) which grid was used
+ * opens the toolbar popup (or shows a notification) to choose a grid when it can't tell which to use,
+ * and shows a notification when there's no grid, or (if enabled) which grid was used
  * @param {{id: number, url?: string}} tab the tab to fill
  * @returns {Promise<FrameFillResult|undefined>} the overall result, or `undefined` if no grid was filled
  */
@@ -229,6 +231,9 @@ export const FillGridWithShortcut = async (tab: {
       return undefined;
 
     case "ambiguous":
+      if (await OpenPopupToChooseGrid()) {
+        return undefined;
+      }
       await ShowBasicNotification(
         browser.i18n.getMessage("Notifications_Title_ChooseGrid"),
         browser.i18n.getMessage("Notifications_Message_ChooseGrid"),
