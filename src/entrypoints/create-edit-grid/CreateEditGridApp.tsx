@@ -58,6 +58,12 @@ import { styled, ThemeProvider } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
+const GRID_TYPE_TITLE_MESSAGES = {
+  entrust: "GridType_Title_Entrust",
+  deepnet: "GridType_Title_Deepnet",
+  custom: "GridType_Title_Custom",
+} as const satisfies Record<GridType, string>;
+
 const FILE_TYPES = [".csv", ".tsv", ".txt"];
 const SPACING = 2;
 
@@ -235,7 +241,7 @@ export default function CreateEditGridApp() {
               [
                 gridFromStorage.title,
                 browser.i18n.getMessage(
-                  `GridType_Title_${gridFromStorage.type}`,
+                  GRID_TYPE_TITLE_MESSAGES[gridFromStorage.type],
                 ),
               ],
             ),
@@ -431,7 +437,7 @@ export default function CreateEditGridApp() {
         ? browser.i18n.getMessage(
             "ManageGrid_StepLabel_Error_CustomGridSettings",
           )
-        : browser.i18n.getMessage(`GridType_Title_${grid.type}`);
+        : browser.i18n.getMessage(GRID_TYPE_TITLE_MESSAGES[grid.type]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -499,7 +505,7 @@ export default function CreateEditGridApp() {
                           {GRID_TYPES.map((type) => (
                             <MenuItem key={type} value={type}>
                               {browser.i18n.getMessage(
-                                `GridType_Title_${type}`,
+                                GRID_TYPE_TITLE_MESSAGES[type],
                               )}
                             </MenuItem>
                           ))}
